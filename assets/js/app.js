@@ -18,9 +18,16 @@
 
   // -------------------------------------------------------------------------
   //  Storage
+  //  Stage progress persists across visits, but the master gate does NOT —
+  //  the locked door appears every time, even if they've already entered.
   // -------------------------------------------------------------------------
   const STORAGE_KEY = "hunt:v1:state";
 
+  const defaultState = () => ({
+    solved: [],       // array of stage numbers (1..6) that have been solved
+    attempts: {},     // { [stageNumber]: numWrongAttempts }
+    hintsShown: []    // stage numbers where the hint has been revealed
+  });
   const loadState = () => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -31,17 +38,13 @@
       return defaultState();
     }
   };
-  const defaultState = () => ({
-    gateUnlocked: false,
-    solved: [],       // array of stage numbers (1..6)
-    attempts: {},     // { [stageNumber]: numWrongAttempts }
-    hintsShown: []    // stage numbers where the hint has been revealed
-  });
   const saveState = () => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
   };
 
   let state = loadState();
+  // gateUnlocked is in-memory only — the locked door always appears on fresh visits
+  let gateUnlocked = false;
 
   // -------------------------------------------------------------------------
   //  Crypto
@@ -144,8 +147,7 @@
     if (!value) return;
     const ok = await passwordMatches(value, CONTENT.masterPasswordHash);
     if (ok) {
-      state.gateUnlocked = true;
-      saveState();
+      gateUnlocked = true;
       clearError();
       enterApp();
     } else {
@@ -168,13 +170,7 @@
     }, 600);
   }
 
-  // already-unlocked? skip the gate
-  if (state.gateUnlocked) {
-    gateEl.hidden = true;
-    gateEl.style.display = "none";
-    document.body.classList.remove("is-locked");
-    $("#app").hidden = false;
-  }
+  // (gate is always shown on fresh visits — no auto-skip)
 
   // -------------------------------------------------------------------------
   //  Tab switching
@@ -458,11 +454,7 @@
   }
 
   // -------------------------------------------------------------------------
-  //  Initial render (if already past the gate)
+  //  Initial focus on the gate input
   // -------------------------------------------------------------------------
-  if (state.gateUnlocked) {
-    renderAll();
-  } else {
-    setTimeout(() => $("#gate-input").focus({ preventScroll: true }), 200);
-  }
+  setTimeout(() => $("#gate-input").focus({ preventScroll: true }), 200);
 })();
