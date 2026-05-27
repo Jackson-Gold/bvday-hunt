@@ -1,5 +1,5 @@
 /* =============================================================================
- *  Our Little Hunt — midnight + rose pink, dreamy & starry
+ *  Dia dos Namorados Scavenger Hunt — midnight + rose pink, dreamy & starry
  * ============================================================================= */
 
 :root {
@@ -26,6 +26,11 @@
 
 * { box-sizing: border-box; }
 
+/* The browser's default [hidden] { display: none } rule has lower specificity
+ * than our component display rules below (e.g. .victory { display: grid }),
+ * so without this elements with `hidden` would still appear. */
+[hidden] { display: none !important; }
+
 html, body {
   margin: 0;
   padding: 0;
@@ -38,6 +43,7 @@ html, body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body.is-locked { overflow: hidden; }
@@ -166,9 +172,10 @@ a { color: var(--rose-soft); }
 .gate__title {
   font-family: var(--serif);
   font-weight: 500;
-  font-size: clamp(28px, 5vw, 38px);
+  font-size: clamp(24px, 6.5vw, 36px);
   margin: 18px 0 4px;
   letter-spacing: 0.5px;
+  line-height: 1.15;
   background: linear-gradient(120deg, #fff 0%, var(--rose-soft) 50%, var(--gold) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -297,12 +304,16 @@ a { color: var(--rose-soft); }
   0%, 60%, 100% { transform: scale(1); }
   20%, 40%      { transform: scale(1.18); }
 }
+.brand { min-width: 0; }
+.brand > div { min-width: 0; flex: 1; }
 .brand__title {
   font-family: var(--serif);
   font-weight: 500;
-  font-size: 22px;
+  font-size: clamp(17px, 4.2vw, 22px);
   margin: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 .brand__subtitle {
   margin: 0;
@@ -783,6 +794,129 @@ a { color: var(--rose-soft); }
 }
 .app__footer span:first-child,
 .app__footer span:last-child { color: var(--rose); }
+
+/* -----------------------------------------------------------------------------
+ *  Mobile polish
+ *  Everything in this site is mobile-first; this block fine-tunes the small
+ *  screens (≤520px), keeping comfortable tap targets, breathing room, and
+ *  the dreamy aesthetic intact on phones.
+ * --------------------------------------------------------------------------- */
+@media (max-width: 520px) {
+  .gate { padding: 20px 14px; }
+  .gate__inner {
+    padding: 32px 22px 26px;
+    border-radius: 18px;
+  }
+  .gate__sigil svg { width: 64px; height: 58px; }
+  .gate__subtitle { font-size: 14px; margin-bottom: 14px; }
+  .gate__greeting { font-size: 13px; margin-bottom: 20px; }
+  .gate__input { font-size: 16px; padding: 13px 14px; letter-spacing: 0.5px; }
+  .gate__btn  { padding: 13px 16px; font-size: 13px; }
+
+  .app {
+    padding: 18px 14px calc(64px + env(safe-area-inset-bottom));
+  }
+  .app__header { gap: 10px; margin-bottom: 18px; }
+
+  .brand { gap: 10px; }
+  .brand__heart { font-size: 26px; }
+  .brand__subtitle { font-size: 12px; }
+
+  .tabs { gap: 2px; }
+  .tab {
+    padding: 8px 11px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    flex: 1 1 auto;
+  }
+
+  .ghost-btn {
+    padding: 6px 10px;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+  }
+
+  .stage-card {
+    padding: 24px 20px;
+    border-radius: 18px;
+  }
+  .stage-card__eyebrow { font-size: 10px; letter-spacing: 2.5px; }
+  .stage-card__title  { font-size: clamp(22px, 6vw, 28px); margin-bottom: 14px; }
+  .stage-card__clue   { font-size: 17px; margin-bottom: 20px; line-height: 1.65; }
+  .stage-card__hint   { font-size: 13px; padding: 12px 14px; }
+  .stage-card__form   { flex-direction: column; gap: 10px; }
+  .stage-card__form input {
+    font-size: 16px;            /* prevents iOS auto-zoom on focus */
+    padding: 13px 14px;
+    flex: 1 1 auto;
+    width: 100%;
+  }
+  .stage-card__form button {
+    padding: 13px 18px;
+    font-size: 12px;
+    width: 100%;
+  }
+
+  .reveal { padding: 14px 16px; border-radius: 12px; }
+  .reveal__body { font-size: 15px; }
+  .reveal__head { font-size: 10px; letter-spacing: 1.5px; }
+
+  .section-title    { font-size: 24px; }
+  .section-sub      { font-size: 15px; margin-bottom: 18px; }
+  .subsection-title { font-size: 18px; margin: 22px 0 10px; }
+
+  .roadmap__item {
+    grid-template-columns: 36px 1fr;
+    grid-template-areas:
+      "num  title"
+      "num  status";
+    row-gap: 2px;
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+  .roadmap__num    { grid-area: num; width: 36px; height: 36px; font-size: 15px; align-self: center; }
+  .roadmap__item > div { grid-area: title; min-width: 0; }
+  .roadmap__title  { font-size: 16px; }
+  .roadmap__status { grid-area: status; text-align: left; font-size: 10px; letter-spacing: 1.5px; }
+  .progress__label { font-size: 14px; }
+
+  .media-card { padding: 14px 14px; border-radius: 12px; }
+  .media-card__title { font-size: 16px; }
+  .media-list--video { grid-template-columns: 1fr; }
+
+  .media-locked, .media-empty { padding: 14px 14px; font-size: 13px; }
+
+  /* Victory overlay: full-bleed on phones, but keep the romantic card feel */
+  .victory { padding: 16px 12px; align-items: start; }
+  .victory__inner {
+    padding: 32px 22px;
+    border-radius: 22px;
+    margin-top: env(safe-area-inset-top);
+    margin-bottom: env(safe-area-inset-bottom);
+  }
+  .victory__sigil svg { width: 96px; height: 87px; }
+  .victory__title    { font-size: clamp(28px, 8vw, 40px); margin: 14px 0 10px; }
+  .victory__message  { font-size: 17px; }
+  .victory__signature { font-size: 15px; margin-bottom: 22px; }
+
+  .app__footer { margin-top: 36px; }
+}
+
+/* Very narrow phones (≤360px): one last squeeze. */
+@media (max-width: 360px) {
+  .brand__heart    { font-size: 22px; }
+  .brand__title    { font-size: 15px; }
+  .brand__subtitle { font-size: 11px; }
+  .tab             { padding: 7px 8px; font-size: 10.5px; letter-spacing: 0.6px; }
+  .ghost-btn       { padding: 6px 8px; font-size: 9.5px; letter-spacing: 1px; }
+}
+
+/* Larger phones in landscape & small tablets: keep a single column but
+   give content slightly more room. */
+@media (min-width: 521px) and (max-width: 719px) {
+  .app { padding: 22px 18px 80px; }
+  .stage-card { padding: 28px 24px; }
+}
 
 /* -----------------------------------------------------------------------------
  *  Reduced motion

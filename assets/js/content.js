@@ -35,7 +35,7 @@ window.HUNT_CONTENT = {
    *  SITE METADATA
    * --------------------------------------------------------------------- */
   site: {
-    title: "Our Little Hunt",
+    title: "Dia dos Namorados Scavenger Hunt",
     subtitle: "for the one I love",
     gateGreeting: "A secret door. A whispered word. Speak it, and step in.",
     gatePlaceholder: "the word that lets you in…",

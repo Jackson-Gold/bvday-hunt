@@ -1,5 +1,9 @@
 name: Deploy to GitHub Pages
 
+# Prerequisite (one-time): Go to repo Settings → Pages → Build and deployment
+# and set "Source" to "GitHub Actions". After that, this workflow auto-deploys
+# on every push to main.
+
 on:
   push:
     branches: [main]
@@ -14,6 +18,11 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+env:
+  # Opt into Node.js 24 ahead of the June 2026 default-switch so we don't
+  # get the "Node.js 20 actions are deprecated" warning.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   deploy:
     environment:
@@ -26,8 +35,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

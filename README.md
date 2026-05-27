@@ -1,4 +1,4 @@
-# Our Little Hunt
+# Dia dos Namorados Scavenger Hunt
 
 A static, password-gated scavenger hunt site for a loved one. Six progressive stages, a roadmap, an entertainment vault for music & video, and a victory finale. Designed for GitHub Pages — auto-deploys via GitHub Actions on every push.
 
@@ -77,12 +77,20 @@ The optional `unlockAtStage` field hides the item until that stage is solved.
 
 ## Deploying to GitHub Pages
 
-The `.github/workflows/pages.yml` workflow auto-deploys on every push to `main`.
+The `.github/workflows/pages.yml` workflow auto-deploys on every push to `main`. **You must enable GitHub Pages in repo settings once before the first deploy will succeed** — otherwise the workflow fails with `Resource not accessible by integration` because the workflow's `GITHUB_TOKEN` can't create the Pages site on its own.
 
-1. **Create a new GitHub repo** (private is fine — only the password-knower can solve it anyway, but if your hashed passwords are weak, prefer private).
-2. From this folder:
+### One-time setup
+
+1. **Create a new GitHub repo.** Public is recommended (private repos need a paid GitHub plan to use Pages). Don't initialize with a README, license, or .gitignore — we already have those.
+2. **Enable Pages with GitHub Actions as the source.** This is the critical step:
+   - Go to your new repo on GitHub
+   - **Settings → Pages** (left sidebar, under "Code and automation")
+   - Under **Build and deployment**, set **Source** to **GitHub Actions**
+   - You don't need to pick a workflow — just changing the source is enough
+3. **Push your code:**
 
 ```bash
+cd "BVday Scavenger Hunt"
 git init
 git add .
 git commit -m "Initial hunt"
@@ -91,10 +99,15 @@ git remote add origin https://github.com/<your-user>/<your-repo>.git
 git push -u origin main
 ```
 
-3. On GitHub, go to **Settings → Pages** and under "Build and deployment" set **Source** to **GitHub Actions**. (You only have to do this once.)
-4. Push again — or the first push triggers the workflow. After ~30 seconds it'll be live at `https://<your-user>.github.io/<your-repo>/`.
+After ~30 seconds the workflow finishes and the site is live at `https://<your-user>.github.io/<your-repo>/`. Watch progress under the **Actions** tab.
 
-That's it. Every subsequent `git push` redeploys automatically.
+Every subsequent `git push origin main` redeploys automatically.
+
+### If the deploy fails
+
+- **`Resource not accessible by integration`** → You haven't enabled Pages with GitHub Actions yet. Do step 2 above, then re-run the failed workflow from the Actions tab.
+- **`Get Pages site failed`** → Same root cause. Pages isn't enabled. Go to Settings → Pages and pick **GitHub Actions** as the source.
+- **404 after deploy** → Wait a minute and hard-refresh; first-time DNS for `.github.io` can lag.
 
 ## Security note
 

@@ -1,5 +1,5 @@
 /* =============================================================================
- *  Our Little Hunt — app logic
+ *  Dia dos Namorados Scavenger Hunt — app logic
  * =============================================================================
  *  - SHA-256 password checks via Web Crypto API (no plaintext in source).
  *  - Inputs are normalized (trim + lowercase) before hashing so casing/spacing
@@ -92,7 +92,7 @@
   // -------------------------------------------------------------------------
   //  Boot — populate site text from content config
   // -------------------------------------------------------------------------
-  document.title = CONTENT.site.title || "A Little Hunt";
+  document.title = CONTENT.site.title || "Dia dos Namorados Scavenger Hunt";
   $$("[data-title]").forEach((n) => (n.textContent = CONTENT.site.title || ""));
   $$("[data-subtitle]").forEach((n) => (n.textContent = CONTENT.site.subtitle || ""));
   $("#gate .gate__greeting").textContent = CONTENT.site.gateGreeting || "";
