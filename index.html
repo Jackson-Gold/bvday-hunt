@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b1030" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>A Little Hunt</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%99%A1%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body class="is-locked">
+  <!-- starfield background -->
+  <div class="stars" aria-hidden="true">
+    <div class="stars__layer stars__layer--1"></div>
+    <div class="stars__layer stars__layer--2"></div>
+    <div class="stars__layer stars__layer--3"></div>
+  </div>
+
+  <!-- floating hearts background -->
+  <div class="hearts" aria-hidden="true"></div>
+
+  <!-- =====================================================================
+       LOCK SCREEN — master gate
+       ===================================================================== -->
+  <section id="gate" class="gate" aria-label="Locked entrance">
+    <div class="gate__inner">
+      <div class="gate__sigil" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="72" height="72">
+          <defs>
+            <radialGradient id="g" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#ffd1e1" />
+              <stop offset="60%" stop-color="#ff7eb3" />
+              <stop offset="100%" stop-color="#5a2a55" />
+            </radialGradient>
+          </defs>
+          <path d="M32 56s-22-12.8-22-28A12 12 0 0 1 32 18a12 12 0 0 1 22 10c0 15.2-22 28-22 28z" fill="url(#g)" />
+        </svg>
+      </div>
+      <h1 class="gate__title" data-title>Our Little Hunt</h1>
+      <p class="gate__subtitle" data-subtitle>for the one I love</p>
+      <p class="gate__greeting" data-greeting></p>
+      <form id="gate-form" class="gate__form" autocomplete="off" novalidate>
+        <label class="sr-only" for="gate-input">Password</label>
+        <input
+          id="gate-input"
+          name="password"
+          type="password"
+          class="gate__input"
+          inputmode="text"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          required
+        />
+        <button type="submit" class="gate__btn">Enter</button>
+      </form>
+      <p id="gate-error" class="gate__error" role="alert" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <!-- =====================================================================
+       HUNT APP — shown once gate is unlocked
+       ===================================================================== -->
+  <main id="app" class="app" hidden>
+    <header class="app__header">
+      <div class="brand">
+        <span class="brand__heart" aria-hidden="true">♡</span>
+        <div>
+          <h1 class="brand__title" data-title>Our Little Hunt</h1>
+          <p class="brand__subtitle" data-subtitle>for the one I love</p>
+        </div>
+      </div>
+      <nav class="tabs" role="tablist" aria-label="Sections">
+        <button class="tab is-active" role="tab" data-tab="hunt" aria-selected="true">The Hunt</button>
+        <button class="tab" role="tab" data-tab="map" aria-selected="false">Map</button>
+        <button class="tab" role="tab" data-tab="vault" aria-selected="false">Entertainment</button>
+      </nav>
+      <button id="reset-btn" class="ghost-btn" type="button" title="Reset progress">reset</button>
+    </header>
+
+    <!-- ============== TAB: THE HUNT ============== -->
+    <section id="tab-hunt" class="tab-panel is-active" role="tabpanel">
+      <div class="stage-card" id="stage-card" aria-live="polite">
+        <!-- populated by JS -->
+      </div>
+
+      <!-- per-stage reveal log -->
+      <div class="reveals" id="reveals" aria-live="polite"></div>
+    </section>
+
+    <!-- ============== TAB: MAP / ROADMAP ============== -->
+    <section id="tab-map" class="tab-panel" role="tabpanel" hidden>
+      <h2 class="section-title">The Road So Far</h2>
+      <p class="section-sub">Six whispers between us. Find each one to find me.</p>
+      <ol id="roadmap" class="roadmap"></ol>
+      <div class="progress">
+        <div class="progress__bar"><div id="progress-fill" class="progress__fill"></div></div>
+        <p class="progress__label"><span id="progress-count">0</span> of <span id="progress-total">6</span> hearts found</p>
+      </div>
+    </section>
+
+    <!-- ============== TAB: ENTERTAINMENT VAULT ============== -->
+    <section id="tab-vault" class="tab-panel" role="tabpanel" hidden>
+      <h2 class="section-title">The Vault</h2>
+      <p class="section-sub" id="vault-intro"></p>
+
+      <h3 class="subsection-title">Sounds</h3>
+      <div id="audio-list" class="media-list media-list--audio"></div>
+
+      <h3 class="subsection-title">Moving Pictures</h3>
+      <div id="video-list" class="media-list media-list--video"></div>
+    </section>
+
+    <footer class="app__footer">
+      <span aria-hidden="true">♡</span>
+      <span>made with love</span>
+      <span aria-hidden="true">♡</span>
+    </footer>
+  </main>
+
+  <!-- =====================================================================
+       VICTORY OVERLAY — shown when stage 6 is solved
+       ===================================================================== -->
+  <section id="victory" class="victory" hidden aria-label="You found me">
+    <div class="victory__inner">
+      <div class="victory__sigil" aria-hidden="true">
+        <svg viewBox="0 0 64 64" width="120" height="120">
+          <defs>
+            <radialGradient id="vg" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#fff1f7" />
+              <stop offset="50%" stop-color="#ff7eb3" />
+              <stop offset="100%" stop-color="#8a3a7a" />
+            </radialGradient>
+          </defs>
+          <path d="M32 56s-22-12.8-22-28A12 12 0 0 1 32 18a12 12 0 0 1 22 10c0 15.2-22 28-22 28z" fill="url(#vg)" />
+        </svg>
+      </div>
+      <h1 class="victory__title" id="victory-title"></h1>
+      <p class="victory__message" id="victory-message"></p>
+      <p class="victory__signature" id="victory-signature"></p>
+      <div id="victory-media" class="victory__media"></div>
+      <button type="button" class="ghost-btn" id="victory-close">return to the hunt</button>
+    </div>
+    <div class="victory__confetti" aria-hidden="true"></div>
+  </section>
+
+  <!-- scripts -->
+  <script src="assets/js/content.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
