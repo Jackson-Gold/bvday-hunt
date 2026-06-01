@@ -43,6 +43,32 @@ window.HUNT_CONTENT = {
   },
 
   /* -----------------------------------------------------------------------
+   *  COUNTDOWN OVERLAY (shown on the landing page)
+   *  A translucent overlay that floats over the locked door and counts down
+   *  to the moment the hunt begins.
+   *
+   *  `target` is an ISO 8601 timestamp WITH an explicit timezone offset, so
+   *  the countdown is correct no matter where the viewer is. Eastern Time in
+   *  June is EDT (UTC-04:00), so noon on June 12th is written as
+   *  "2026-06-12T12:00:00-04:00".
+   * --------------------------------------------------------------------- */
+  countdown: {
+    enabled: true,
+    target: "2026-06-12T12:00:00-04:00",
+    eyebrow: "until it begins",
+    // Shown once the countdown reaches zero
+    readyMessage: "It's time, meu amor. Step inside. ♡",
+    message:
+      "Hey meu amor,\n\n" +
+      "I bet you're wondering what this is and why a playing card in your bag led you here. " +
+      "Well that's a great question, and it will all become clear. " +
+      "I hope you like the surprise! Miss you so much! Love you!\n\n" +
+      "Yours,\nJackson",
+    // Label for the button that tucks the overlay away to reveal the door
+    dismissLabel: "peek at the door",
+  },
+
+  /* -----------------------------------------------------------------------
    *  MASTER GATE PASSWORD
    *  This is the password required to ENTER the site at all.
    *  Default plaintext: "love"

@@ -63,6 +63,55 @@
   </section>
 
   <!-- =====================================================================
+       COUNTDOWN OVERLAY — floats over the landing page until the hunt begins
+       ===================================================================== -->
+  <section id="countdown" class="countdown" hidden aria-label="Countdown to the hunt">
+    <div class="countdown__inner">
+      <div class="countdown__sigil" aria-hidden="true">
+        <svg viewBox="0 0 32 29" width="64" height="58">
+          <defs>
+            <radialGradient id="cg" cx="50%" cy="38%" r="65%">
+              <stop offset="0%" stop-color="#ffd1e1" />
+              <stop offset="55%" stop-color="#ff7eb3" />
+              <stop offset="100%" stop-color="#5a2a55" />
+            </radialGradient>
+          </defs>
+          <path d="M23.6 0c-3.4 0-6.3 2.18-7.6 5.05C14.7 2.18 11.8 0 8.4 0 3.8 0 0 3.8 0 8.4c0 9.42 9.48 11.9 16 21.2 6.13-9.32 16-12 16-21.2C32 3.8 28.2 0 23.6 0z" fill="url(#cg)" />
+        </svg>
+      </div>
+
+      <p class="countdown__message" id="countdown-message"></p>
+
+      <p class="countdown__eyebrow" id="countdown-eyebrow"></p>
+      <div class="countdown__clock" id="countdown-clock" role="timer" aria-live="off">
+        <div class="countdown__unit">
+          <span class="countdown__value" id="cd-days">00</span>
+          <span class="countdown__label">days</span>
+        </div>
+        <span class="countdown__sep" aria-hidden="true">:</span>
+        <div class="countdown__unit">
+          <span class="countdown__value" id="cd-hours">00</span>
+          <span class="countdown__label">hours</span>
+        </div>
+        <span class="countdown__sep" aria-hidden="true">:</span>
+        <div class="countdown__unit">
+          <span class="countdown__value" id="cd-mins">00</span>
+          <span class="countdown__label">min</span>
+        </div>
+        <span class="countdown__sep" aria-hidden="true">:</span>
+        <div class="countdown__unit">
+          <span class="countdown__value" id="cd-secs">00</span>
+          <span class="countdown__label">sec</span>
+        </div>
+      </div>
+
+      <p class="countdown__ready" id="countdown-ready" hidden></p>
+
+      <button type="button" class="countdown__dismiss" id="countdown-dismiss"></button>
+    </div>
+  </section>
+
+  <!-- =====================================================================
        HUNT APP — shown once gate is unlocked
        ===================================================================== -->
   <main id="app" class="app" hidden>

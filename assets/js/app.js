@@ -454,7 +454,89 @@
   }
 
   // -------------------------------------------------------------------------
-  //  Initial focus on the gate input
+  //  Countdown overlay (landing page)
+  //  Floats over the locked door and counts down to the moment the hunt
+  //  begins. The target carries its own timezone offset, so the math is
+  //  correct regardless of the viewer's device timezone.
   // -------------------------------------------------------------------------
-  setTimeout(() => $("#gate-input").focus({ preventScroll: true }), 200);
+  const countdownEl = $("#countdown");
+  let countdownTimer = null;
+  const pad2 = (n) => String(n).padStart(2, "0");
+
+  function initCountdown() {
+    const cfg = CONTENT.countdown;
+    if (!countdownEl) return false;
+    if (!cfg || cfg.enabled === false || !cfg.target) {
+      countdownEl.hidden = true;
+      return false;
+    }
+
+    const target = new Date(cfg.target).getTime();
+    if (isNaN(target)) {
+      console.warn("countdown.target is not a valid date:", cfg.target);
+      countdownEl.hidden = true;
+      return false;
+    }
+
+    $("#countdown-message").textContent = cfg.message || "";
+    $("#countdown-eyebrow").textContent = cfg.eyebrow || "";
+
+    const dismissBtn = $("#countdown-dismiss");
+    const clockEl = $("#countdown-clock");
+    const readyEl = $("#countdown-ready");
+    const daysEl  = $("#cd-days");
+    const hoursEl = $("#cd-hours");
+    const minsEl  = $("#cd-mins");
+    const secsEl  = $("#cd-secs");
+
+    dismissBtn.textContent = cfg.dismissLabel || "enter";
+
+    let reachedReady = false;
+    function tick() {
+      const diff = target - Date.now();
+      if (diff <= 0) {
+        daysEl.textContent = hoursEl.textContent = minsEl.textContent = secsEl.textContent = "00";
+        if (!reachedReady) {
+          reachedReady = true;
+          countdownEl.classList.add("is-ready");
+          clockEl.hidden = true;
+          readyEl.hidden = false;
+          readyEl.textContent = cfg.readyMessage || "It's time. ♡";
+          dismissBtn.textContent = "enter ♡";
+        }
+        if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+        return;
+      }
+      const totalSec = Math.floor(diff / 1000);
+      daysEl.textContent  = pad2(Math.floor(totalSec / 86400));
+      hoursEl.textContent = pad2(Math.floor((totalSec % 86400) / 3600));
+      minsEl.textContent  = pad2(Math.floor((totalSec % 3600) / 60));
+      secsEl.textContent  = pad2(totalSec % 60);
+    }
+
+    function dismiss() {
+      if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+      countdownEl.style.transition = "opacity .5s ease";
+      countdownEl.style.opacity = "0";
+      setTimeout(() => {
+        countdownEl.hidden = true;
+        if (!gateUnlocked) $("#gate-input").focus({ preventScroll: true });
+      }, 500);
+    }
+    dismissBtn.addEventListener("click", dismiss);
+
+    countdownEl.hidden = false;
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+    return true;
+  }
+
+  const countdownActive = initCountdown();
+
+  // -------------------------------------------------------------------------
+  //  Initial focus on the gate input (skip while the countdown veil is up)
+  // -------------------------------------------------------------------------
+  if (!countdownActive) {
+    setTimeout(() => $("#gate-input").focus({ preventScroll: true }), 200);
+  }
 })();
