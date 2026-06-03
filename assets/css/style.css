@@ -367,32 +367,6 @@ a { color: var(--rose-soft); }
   color: var(--rose-soft);
   text-shadow: var(--glow-soft);
 }
-.countdown__dismiss {
-  margin-top: 26px;
-  appearance: none;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text-muted);
-  font-family: var(--sans);
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  padding: 9px 16px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: color .2s, border-color .2s, box-shadow .2s;
-}
-.countdown__dismiss:hover {
-  color: var(--rose-soft);
-  border-color: var(--rose-soft);
-  box-shadow: 0 0 18px -8px rgba(255, 126, 179, 0.6);
-}
-.countdown.is-ready .countdown__dismiss {
-  background: linear-gradient(135deg, var(--rose) 0%, var(--rose-deep) 100%);
-  color: #1a0a1a;
-  border-color: transparent;
-  font-weight: 600;
-}
 
 /* -----------------------------------------------------------------------------
  *  APP / MAIN HUNT VIEW

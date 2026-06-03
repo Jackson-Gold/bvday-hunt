@@ -64,8 +64,6 @@ window.HUNT_CONTENT = {
       "Well that's a great question, and it will all become clear. " +
       "I hope you like the surprise! Miss you so much! Love you!\n\n" +
       "Yours,\nJackson",
-    // Label for the button that tucks the overlay away to reveal the door
-    dismissLabel: "peek at the door",
   },
 
   /* -----------------------------------------------------------------------

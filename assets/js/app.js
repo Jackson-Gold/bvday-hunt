@@ -481,15 +481,12 @@
     $("#countdown-message").textContent = cfg.message || "";
     $("#countdown-eyebrow").textContent = cfg.eyebrow || "";
 
-    const dismissBtn = $("#countdown-dismiss");
     const clockEl = $("#countdown-clock");
     const readyEl = $("#countdown-ready");
     const daysEl  = $("#cd-days");
     const hoursEl = $("#cd-hours");
     const minsEl  = $("#cd-mins");
     const secsEl  = $("#cd-secs");
-
-    dismissBtn.textContent = cfg.dismissLabel || "enter";
 
     let reachedReady = false;
     function tick() {
@@ -502,7 +499,6 @@
           clockEl.hidden = true;
           readyEl.hidden = false;
           readyEl.textContent = cfg.readyMessage || "It's time. ♡";
-          dismissBtn.textContent = "enter ♡";
         }
         if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
         return;
@@ -523,7 +519,23 @@
         if (!gateUnlocked) $("#gate-input").focus({ preventScroll: true });
       }, 500);
     }
-    dismissBtn.addEventListener("click", dismiss);
+
+    // ---- Hidden bypass (for testing) -------------------------------------
+    // There is intentionally NO visible button — a normal visitor cannot
+    // click through. To bypass: tap/click the heart at the top 7 times in a
+    // row (each tap within 1.5s of the last). Resets if you pause too long.
+    const sigil = $("#countdown .countdown__sigil");
+    if (sigil) {
+      let taps = 0;
+      let lastTap = 0;
+      sigil.style.cursor = "default";
+      sigil.addEventListener("click", () => {
+        const now = Date.now();
+        taps = (now - lastTap < 1500) ? taps + 1 : 1;
+        lastTap = now;
+        if (taps >= 7) { taps = 0; dismiss(); }
+      });
+    }
 
     countdownEl.hidden = false;
     tick();
