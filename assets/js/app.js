@@ -24,9 +24,10 @@
   const STORAGE_KEY = "hunt:v1:state";
 
   const defaultState = () => ({
-    solved: [],       // array of stage numbers (1..6) that have been solved
-    attempts: {},     // { [stageNumber]: numWrongAttempts }
-    hintsShown: []    // stage numbers where the hint has been revealed
+    solved: [],              // stage numbers (1..6) that have been solved
+    attempts: {},            // { [stageNumber]: numWrongAttempts }
+    hintsShown: [],          // stage numbers where the hint has been revealed
+    locationsConfirmed: []   // stage numbers whose location is guessed/revealed
   });
   const loadState = () => {
     try {
@@ -107,6 +108,32 @@
       if (!target) continue;
       if (got === target) return true;
       if (levenshtein(got, target) <= allowedTypos(target.length)) return true;
+    }
+    return false;
+  }
+
+  // Location guessing is intentionally MORE lenient than passwords — anything
+  // reasonably close counts: a partial name, a nickname, or a typo'd spelling.
+  function locationGuessesFor(stage) {
+    const list = [];
+    if (stage.locationName) list.push(stage.locationName);
+    if (Array.isArray(stage.locationAliases)) list.push(...stage.locationAliases);
+    return list;
+  }
+  function matchesLocation(input, names) {
+    const got = looseNormalize(input);
+    if (got.length < 2) return false;
+    for (const name of (names || [])) {
+      const target = looseNormalize(name);
+      if (!target) continue;
+      if (got === target) return true;
+      // partial match: a meaningful chunk of the name (or vice-versa)
+      const shorter = got.length <= target.length ? got : target;
+      const longer  = got.length <= target.length ? target : got;
+      if (shorter.length >= 4 && longer.includes(shorter)) return true;
+      // typo tolerance scaled to name length
+      const thr = Math.max(2, Math.floor(target.length * 0.34));
+      if (levenshtein(got, target) <= thr) return true;
     }
     return false;
   }
@@ -289,18 +316,73 @@
     wrap.appendChild(el("p", { class: "stage-card__eyebrow" },
       `stage ${stage.number} of ${total}`));
     wrap.appendChild(el("h2", { class: "stage-card__title" }, stage.title || `Stage ${stage.number}`));
+    wrap.appendChild(el("p", { class: "stage-card__clue" }, stage.clue || ""));
 
-    if (stage.location) {
+    const locationConfirmed = state.locationsConfirmed.includes(stage.number);
+
+    function confirmLocation() {
+      if (!state.locationsConfirmed.includes(stage.number)) {
+        state.locationsConfirmed.push(stage.number);
+      }
+      saveState();
+      renderStageCard();
+    }
+
+    // ---- PHASE 1: guess (or reveal) the location ------------------------
+    if (!locationConfirmed) {
+      const guessForm = el("form", { class: "stage-card__form", autocomplete: "off", novalidate: true });
+      const guessInput = el("input", {
+        type: "text",
+        placeholder: "where do you think you're headed?",
+        "aria-label": "Guess the location",
+        autocapitalize: "off",
+        autocorrect: "off",
+        spellcheck: "false"
+      });
+      const guessBtn = el("button", { type: "submit" }, "guess");
+      const guessFeedback = el("p", { class: "stage-card__feedback", "aria-live": "polite" });
+      const revealBtn = el("button", { type: "button", class: "stage-card__reveal-location" }, "reveal location");
+
+      guessForm.appendChild(guessInput);
+      guessForm.appendChild(guessBtn);
+      wrap.appendChild(guessForm);
+      wrap.appendChild(guessFeedback);
+      wrap.appendChild(revealBtn);
+
+      if (hintRevealed && stage.hint) {
+        wrap.appendChild(el("p", { class: "stage-card__hint" }, `hint — ${stage.hint}`));
+      }
+
+      guessForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (!guessInput.value) return;
+        if (matchesLocation(guessInput.value, locationGuessesFor(stage))) {
+          guessFeedback.textContent = "yes — that's the place. ♡";
+          setTimeout(confirmLocation, 650);
+        } else {
+          wrap.classList.remove("is-shaking"); void wrap.offsetWidth;
+          wrap.classList.add("is-shaking");
+          guessFeedback.textContent = "not there. think again, or reveal it below.";
+          guessInput.select();
+        }
+      });
+      revealBtn.addEventListener("click", confirmLocation);
+
+      setTimeout(() => guessInput.focus({ preventScroll: true }), 50);
+      return;
+    }
+
+    // ---- PHASE 2: location confirmed → show banner + password field -----
+    if (stage.locationName || stage.locationDetail) {
       wrap.appendChild(el("div", { class: "stage-card__location" }, [
         el("span", { class: "stage-card__location-pin", "aria-hidden": "true" }, "📍"),
         el("span", null, [
           el("span", { class: "stage-card__location-label" }, "Where to go"),
-          el("span", { class: "stage-card__location-name" }, stage.location)
+          stage.locationName ? el("span", { class: "stage-card__location-name" }, stage.locationName) : false,
+          stage.locationDetail ? el("span", { class: "stage-card__location-detail" }, stage.locationDetail) : false
         ])
       ]));
     }
-
-    wrap.appendChild(el("p", { class: "stage-card__clue" }, stage.clue || ""));
 
     if (hintRevealed && stage.hint) {
       wrap.appendChild(el("p", { class: "stage-card__hint" }, `hint — ${stage.hint}`));
@@ -310,7 +392,7 @@
     const input = el("input", {
       type: "text",
       placeholder: "the password you found…",
-      "aria-label": `Password for ${stage.title || "this stop"}`,
+      "aria-label": `Password for ${stage.locationName || "this stop"}`,
       autocapitalize: "off",
       autocorrect: "off",
       spellcheck: "false"

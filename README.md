@@ -45,22 +45,33 @@ All content lives in **`assets/js/content.js`**. Open it — every spot you shou
 
 ### The stops and their passwords
 
-Each stage now represents a real stop. The important fields:
+Each stage represents a real stop, and the location is hidden until she guesses or reveals it. The important fields:
 
 ```js
 {
   number: 1,
-  title: "Bubs Bakery",
-  location: "Bubs Bakery — 123 Main St (the one with the pink awning)",
-  clue: "Your note for getting her there.",
-  hint: "Optional nudge, shown after 3 wrong tries.",
-  answers: ["cinnamon roll", "roll"],   // ANY one of these unlocks it
+  title: "The First Stop",                 // non-revealing heading
+  locationName: "Bubs Bakery",             // the place (guess target + banner)
+  locationAliases: ["bubs", "bubs bakery"],// optional extra accepted guesses
+  locationDetail: "123 Main St (pink awning)", // optional, shown after confirm
+  clue: "Your riddle that leads her there (don't name it outright).",
+  hint: "Optional nudge, shown after 3 wrong password tries.",
+  answers: ["cinnamon roll", "roll"],      // ANY one of these unlocks it
   reveal: "What she finds here / where to go next."
 }
 ```
 
-- **`location`** is shown prominently as a "Where to go" banner so she confirms the right place before searching — it does not appear for upcoming stops on the Map, so later locations stay a surprise.
-- **`answers`** is a list. Any one of them unlocks the stage. Matching is **case-, space-, and accent-insensitive and tolerates small typos**, so "Cinnamon Roll", "cinnamonroll", and "cinamon roll" all work. Just list the canonical spelling(s) of what she'll find at the location.
+How a stop plays out:
+
+1. She sees the **clue** plus a **"where do you think you're headed?"** guess field and a **reveal location** button.
+2. If she guesses the place (matching is very lenient — partial names, nicknames, and typos all count) **or** taps reveal, the **📍 Where to go** banner appears with `locationName` and `locationDetail`.
+3. She walks there, finds the password, and enters it in the **unlock** field that appears with the banner.
+
+Notes:
+
+- **Guessing the location is lenient on purpose** — "washington square", "the park", "minigolf", or a typo'd "bubs bakary" all pass. Add `locationAliases` only if you want to be extra safe.
+- **`answers`** is a list; any one unlocks the stage. Matching is **case-, space-, and accent-insensitive and tolerates small typos**, so "Cinnamon Roll", "cinnamonroll", and "cinamon roll" all work.
+- Upcoming stops never show their name on the Map, and the heading (`title`) is deliberately generic, so locations stay a surprise until she reaches them.
 
 ### The master password (still hashed)
 

@@ -538,6 +538,36 @@ a { color: var(--rose-soft); }
   line-height: 1.4;
   color: var(--text);
 }
+.stage-card__location-detail {
+  display: block;
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
+
+.stage-card__reveal-location {
+  margin-top: 12px;
+  width: 100%;
+  appearance: none;
+  background: transparent;
+  border: 1px dashed var(--border);
+  color: var(--text-muted);
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color .2s, border-color .2s, box-shadow .2s;
+}
+.stage-card__reveal-location:hover {
+  color: var(--rose-soft);
+  border-color: var(--rose-soft);
+  box-shadow: 0 0 18px -10px rgba(255, 126, 179, 0.6);
+}
 
 .stage-card__clue {
   font-family: var(--serif);

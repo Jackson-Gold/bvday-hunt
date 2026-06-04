@@ -76,74 +76,94 @@ window.HUNT_CONTENT = {
   /* -----------------------------------------------------------------------
    *  THE SIX STAGES (the real stops)
    *
+   *  The location is NOT given away. For each stop she sees the clue, then
+   *  either guesses the location or taps "reveal location". Once confirmed,
+   *  the "Where to go" banner and the password field appear.
+   *
    *  Each stage has:
-   *    title    — the stop's name (shown as the heading)
-   *    location — the destination, shown as a "Where to go" confirmation so
-   *               she doesn't walk to the wrong place. Add the exact address
-   *               or a landmark she'll recognize when she arrives.
-   *    clue     — your note / directions for this stop (edit the PLACEHOLDERs)
-   *    hint     — optional; appears after 3 wrong attempts
-   *    answers  — the password(s) she'll find AT the location. ANY one of them
-   *               unlocks the stage. Matching ignores case, spaces, and
-   *               accents, and tolerates small typos — so don't worry about
-   *               exact spelling.
-   *    reveal   — shown after solving (point her to the next stop)
+   *    title           — a non-revealing heading (don't put the place here)
+   *    locationName    — the real place. Used for guess-matching AND shown in
+   *                      the "Where to go" banner once confirmed.
+   *    locationAliases — optional extra spellings/nicknames accepted as a
+   *                      correct guess. Guessing is very lenient (anything
+   *                      close — partial names, typos — counts), so these are
+   *                      just for safety.
+   *    locationDetail  — optional address / landmark shown under the place
+   *                      name once confirmed.
+   *    clue            — your riddle that leads her there (don't name it)
+   *    hint            — optional; appears after 3 wrong password attempts
+   *    answers         — the password(s) she'll find AT the location. ANY one
+   *                      unlocks the stage. Matching ignores case, spaces, and
+   *                      accents and forgives small typos.
+   *    reveal          — shown after solving (point her toward the next stop)
    *
    *  Stage 6 is the FINAL stage and triggers the victory page.
    * --------------------------------------------------------------------- */
   stages: [
     {
       number: 1,
-      title: "Bubs Bakery",
-      location: "Bubs Bakery — PLACEHOLDER: add the exact address / what she'll see when she's there.",
-      clue: "PLACEHOLDER — your note for getting her to Bubs Bakery. A sweet line, a memory, directions.",
+      title: "The First Stop",
+      locationName: "Bubs Bakery",
+      locationAliases: ["bubs", "bubs bakery"],
+      locationDetail: "PLACEHOLDER — exact address / what she'll see when she's there.",
+      clue: "PLACEHOLDER — your riddle that leads her to Bubs Bakery (don't name it outright).",
       hint: "PLACEHOLDER — optional gentle nudge.",
       answers: ["cinnamon roll", "roll"],
-      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
+      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
     },
     {
       number: 2,
-      title: "Balade",
-      location: "Balade — PLACEHOLDER: add the exact address / what she'll see when she's there.",
-      clue: "PLACEHOLDER — your note for getting her to Balade.",
+      title: "The Second Stop",
+      locationName: "Balade",
+      locationAliases: ["balade"],
+      locationDetail: "PLACEHOLDER — exact address / what she'll see when she's there.",
+      clue: "PLACEHOLDER — your riddle that leads her to Balade (don't name it outright).",
       hint: "PLACEHOLDER — optional gentle nudge.",
       answers: ["lebanese"],
-      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
+      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
     },
     {
       number: 3,
-      title: "Aum Shanti Bookshop",
-      location: "Aum Shanti Bookshop — PLACEHOLDER: add the exact address / what she'll see when she's there.",
-      clue: "PLACEHOLDER — your note for getting her to Aum Shanti Bookshop.",
+      title: "The Third Stop",
+      locationName: "Aum Shanti Bookshop",
+      locationAliases: ["aum shanti", "aum shanti bookshop", "aum shanti book shop"],
+      locationDetail: "PLACEHOLDER — exact address / what she'll see when she's there.",
+      clue: "PLACEHOLDER — your riddle that leads her to Aum Shanti Bookshop (don't name it outright).",
       hint: "PLACEHOLDER — optional gentle nudge.",
       answers: ["amethyst", "rabbit", "bunny"],
-      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
+      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
     },
     {
       number: 4,
-      title: "Washington Square Park",
-      location: "Washington Square Park — PLACEHOLDER: add the exact spot (the arch? the fountain?).",
-      clue: "PLACEHOLDER — your note for getting her to Washington Square Park.",
+      title: "The Fourth Stop",
+      locationName: "Washington Square Park",
+      locationAliases: ["washington square park", "washington square", "wsp", "the park"],
+      locationDetail: "PLACEHOLDER — the exact spot (the arch? the fountain?).",
+      clue: "PLACEHOLDER — your riddle that leads her to Washington Square Park (don't name it outright).",
       hint: "PLACEHOLDER — optional gentle nudge.",
       answers: ["kiss"],
-      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
+      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
     },
     {
       number: 5,
-      title: "McNally Jackson Books",
-      location: "McNally Jackson Books — PLACEHOLDER: add the exact address / which location.",
-      clue: "PLACEHOLDER — your note for getting her to McNally Jackson.",
+      title: "The Fifth Stop",
+      locationName: "McNally Jackson Books",
+      locationAliases: ["mcnally jackson", "mcnally jackson books", "mcnally", "mcnallys"],
+      locationDetail: "PLACEHOLDER — exact address / which location.",
+      clue: "PLACEHOLDER — your riddle that leads her to McNally Jackson (don't name it outright).",
       hint: "PLACEHOLDER — optional gentle nudge.",
       // NOTE: you wrote "Men amor" — I assumed the Portuguese "meu amor".
       // Both are accepted; remove either if you like.
       answers: ["meu amor", "men amor"],
-      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
+      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
     },
     {
       number: 6,
-      title: "Pier 25 Minigolf",
-      location: "Pier 25 Minigolf — PLACEHOLDER: add the exact spot she should reach.",
-      clue: "PLACEHOLDER — your note for the final stop, Pier 25 minigolf.",
+      title: "The Final Stop",
+      locationName: "Pier 25 Minigolf",
+      locationAliases: ["pier 25", "pier 25 minigolf", "pier 25 mini golf", "minigolf", "mini golf"],
+      locationDetail: "PLACEHOLDER — the exact spot she should reach.",
+      clue: "PLACEHOLDER — your riddle that leads her to Pier 25 minigolf (don't name it outright).",
       hint: "PLACEHOLDER — optional gentle nudge.",
       answers: ["saudades"],
       isFinal: true
