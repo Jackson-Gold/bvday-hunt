@@ -38,20 +38,39 @@ Replace these before sharing the site! See below.
 All content lives in **`assets/js/content.js`**. Open it — every spot you should edit is marked `PLACEHOLDER`. You can change:
 
 - The site title, subtitle, and the greeting on the locked door
-- The master password
-- Each of the six stages (title, clue, hint, password, reveal text)
+- The master password (the word that gets her into the site)
+- Each of the six stops (title, location, clue, hint, accepted passwords, reveal text)
 - The victory page (title, message, signature, optional finale media)
 - The entertainment vault (audio and video items)
 
-### Generating password hashes
+### The stops and their passwords
 
-Passwords are stored as SHA-256 hashes so they aren't readable in your repo. To generate a hash:
+Each stage now represents a real stop. The important fields:
+
+```js
+{
+  number: 1,
+  title: "Bubs Bakery",
+  location: "Bubs Bakery — 123 Main St (the one with the pink awning)",
+  clue: "Your note for getting her there.",
+  hint: "Optional nudge, shown after 3 wrong tries.",
+  answers: ["cinnamon roll", "roll"],   // ANY one of these unlocks it
+  reveal: "What she finds here / where to go next."
+}
+```
+
+- **`location`** is shown prominently as a "Where to go" banner so she confirms the right place before searching — it does not appear for upcoming stops on the Map, so later locations stay a surprise.
+- **`answers`** is a list. Any one of them unlocks the stage. Matching is **case-, space-, and accent-insensitive and tolerates small typos**, so "Cinnamon Roll", "cinnamonroll", and "cinamon roll" all work. Just list the canonical spelling(s) of what she'll find at the location.
+
+### The master password (still hashed)
+
+Only the **site entry** password is hashed (so it isn't readable in source). To change it:
 
 1. Open **`tools/hash.html`** in any browser (locally, or after deploy at `https://<your-user>.github.io/<repo>/tools/hash.html`).
 2. Type your password — the hash appears instantly.
-3. Click "copy hash" and paste it into the matching `passwordHash` (or `masterPasswordHash`) in `assets/js/content.js`.
+3. Click "copy hash" and paste it into `masterPasswordHash` in `assets/js/content.js`.
 
-Passwords are normalized (trimmed and lowercased) before hashing on both ends, so the person solving doesn't have to worry about exact casing or stray spaces.
+> Why aren't the stage passwords hashed? Forgiving typos requires comparing the typed text to the real word, which a one-way hash can't do. The stop names and clues already live in `content.js` in plain text, so the hunt's secrecy comes from the physical experience — don't put anything you need truly hidden into the clues.
 
 ### Adding media
 

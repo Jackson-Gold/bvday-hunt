@@ -47,7 +47,9 @@
   let gateUnlocked = false;
 
   // -------------------------------------------------------------------------
-  //  Crypto
+  //  Crypto — the master gate stays hashed (exact, never in source).
+  //  `normalize` here must match what tools/hash.html uses (trim + lowercase),
+  //  otherwise the gate hash won't line up.
   // -------------------------------------------------------------------------
   const normalize = (s) => String(s || "").trim().toLowerCase();
   async function sha256Hex(input) {
@@ -61,6 +63,52 @@
     if (!expectedHash) return false;
     const h = await sha256Hex(normalize(input));
     return h === String(expectedHash).trim().toLowerCase();
+  }
+
+  // -------------------------------------------------------------------------
+  //  Fuzzy answer matching (stage passwords)
+  //  Stage answers are checked leniently: case-, space-, and accent-
+  //  insensitive, with small typos forgiven. Any one of a stage's `answers`
+  //  unlocks it.
+  // -------------------------------------------------------------------------
+  const looseNormalize = (s) =>
+    String(s || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // strip accents (saudádes → saudades)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "");      // drop spaces & punctuation
+
+  function levenshtein(a, b) {
+    const m = a.length, n = b.length;
+    if (m === 0) return n;
+    if (n === 0) return m;
+    let prev = new Array(n + 1);
+    for (let j = 0; j <= n; j++) prev[j] = j;
+    for (let i = 1; i <= m; i++) {
+      const cur = [i];
+      for (let j = 1; j <= n; j++) {
+        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+      }
+      prev = cur;
+    }
+    return prev[n];
+  }
+
+  // How many typos to forgive, scaled to the answer's length.
+  const allowedTypos = (len) => (len <= 5 ? 1 : 2);
+
+  function matchesAnswer(input, answers) {
+    const got = looseNormalize(input);
+    if (!got) return false;
+    const list = Array.isArray(answers) ? answers : (answers != null ? [answers] : []);
+    for (const ans of list) {
+      const target = looseNormalize(ans);
+      if (!target) continue;
+      if (got === target) return true;
+      if (levenshtein(got, target) <= allowedTypos(target.length)) return true;
+    }
+    return false;
   }
 
   // -------------------------------------------------------------------------
@@ -241,6 +289,17 @@
     wrap.appendChild(el("p", { class: "stage-card__eyebrow" },
       `stage ${stage.number} of ${total}`));
     wrap.appendChild(el("h2", { class: "stage-card__title" }, stage.title || `Stage ${stage.number}`));
+
+    if (stage.location) {
+      wrap.appendChild(el("div", { class: "stage-card__location" }, [
+        el("span", { class: "stage-card__location-pin", "aria-hidden": "true" }, "📍"),
+        el("span", null, [
+          el("span", { class: "stage-card__location-label" }, "Where to go"),
+          el("span", { class: "stage-card__location-name" }, stage.location)
+        ])
+      ]));
+    }
+
     wrap.appendChild(el("p", { class: "stage-card__clue" }, stage.clue || ""));
 
     if (hintRevealed && stage.hint) {
@@ -249,9 +308,9 @@
 
     const form = el("form", { class: "stage-card__form", autocomplete: "off", novalidate: true });
     const input = el("input", {
-      type: "password",
-      placeholder: "the answer…",
-      "aria-label": `Answer for stage ${stage.number}`,
+      type: "text",
+      placeholder: "the password you found…",
+      "aria-label": `Password for ${stage.title || "this stop"}`,
       autocapitalize: "off",
       autocorrect: "off",
       spellcheck: "false"
@@ -263,10 +322,10 @@
     wrap.appendChild(form);
     wrap.appendChild(feedback);
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (!input.value) return;
-      const ok = await passwordMatches(input.value, stage.passwordHash);
+      const ok = matchesAnswer(input.value, stage.answers);
       if (ok) {
         if (!state.solved.includes(stage.number)) state.solved.push(stage.number);
         state.attempts[stage.number] = 0;

@@ -74,67 +74,78 @@ window.HUNT_CONTENT = {
   masterPasswordHash: "686f746a95b6f836d7d70567c302c3f9ebb5ee0def3d1220ee9d4e9f34f5e131",
 
   /* -----------------------------------------------------------------------
-   *  THE SIX STAGES
-   *  Each stage has a clue (shown before solving), a password (hashed), and
-   *  a reveal (shown after solving — usually the next clue or location).
+   *  THE SIX STAGES (the real stops)
+   *
+   *  Each stage has:
+   *    title    — the stop's name (shown as the heading)
+   *    location — the destination, shown as a "Where to go" confirmation so
+   *               she doesn't walk to the wrong place. Add the exact address
+   *               or a landmark she'll recognize when she arrives.
+   *    clue     — your note / directions for this stop (edit the PLACEHOLDERs)
+   *    hint     — optional; appears after 3 wrong attempts
+   *    answers  — the password(s) she'll find AT the location. ANY one of them
+   *               unlocks the stage. Matching ignores case, spaces, and
+   *               accents, and tolerates small typos — so don't worry about
+   *               exact spelling.
+   *    reveal   — shown after solving (point her to the next stop)
+   *
    *  Stage 6 is the FINAL stage and triggers the victory page.
    * --------------------------------------------------------------------- */
   stages: [
     {
       number: 1,
-      title: "The First Whisper",
-      // Shown when this stage is the current one
-      clue: "PLACEHOLDER — write your first clue here. A riddle, a location, an inside joke. Something only they would know.",
-      // Hint appears after 3 wrong attempts
-      hint: "PLACEHOLDER — a gentle nudge in the right direction.",
-      // SHA-256 of the answer. Default plaintext: "stage1"
-      passwordHash: "ef24c98b6f6843d9d586189733598c533de9fa109464aa1d7045c667a4621b0f",
-      // Shown once they unlock this stage — typically points to where stage 2 lives
-      reveal: "PLACEHOLDER — what they discover for solving stage 1. A memory, a photo caption, instructions for where to physically go next."
+      title: "Bubs Bakery",
+      location: "Bubs Bakery — PLACEHOLDER: add the exact address / what she'll see when she's there.",
+      clue: "PLACEHOLDER — your note for getting her to Bubs Bakery. A sweet line, a memory, directions.",
+      hint: "PLACEHOLDER — optional gentle nudge.",
+      answers: ["cinnamon roll", "roll"],
+      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
     },
     {
       number: 2,
-      title: "The Second Heartbeat",
-      clue: "PLACEHOLDER — your second clue goes here.",
-      hint: "PLACEHOLDER — optional hint for stage 2.",
-      // Default plaintext: "stage2"
-      passwordHash: "5e585fd3fab5cb85a941179b4df835cef988f0281af9f47878024f539c302df5",
-      reveal: "PLACEHOLDER — reveal text for stage 2."
+      title: "Balade",
+      location: "Balade — PLACEHOLDER: add the exact address / what she'll see when she's there.",
+      clue: "PLACEHOLDER — your note for getting her to Balade.",
+      hint: "PLACEHOLDER — optional gentle nudge.",
+      answers: ["lebanese"],
+      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
     },
     {
       number: 3,
-      title: "The Hidden Verse",
-      clue: "PLACEHOLDER — your third clue goes here.",
-      hint: "PLACEHOLDER — optional hint for stage 3.",
-      // Default plaintext: "stage3"
-      passwordHash: "1d1444f304d444a21b68e0d07f873bb024d5545820b6df946923956bd86b0826",
-      reveal: "PLACEHOLDER — reveal text for stage 3."
+      title: "Aum Shanti Bookshop",
+      location: "Aum Shanti Bookshop — PLACEHOLDER: add the exact address / what she'll see when she's there.",
+      clue: "PLACEHOLDER — your note for getting her to Aum Shanti Bookshop.",
+      hint: "PLACEHOLDER — optional gentle nudge.",
+      answers: ["amethyst", "rabbit", "bunny"],
+      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
     },
     {
       number: 4,
-      title: "The Quiet Trail",
-      clue: "PLACEHOLDER — your fourth clue goes here.",
-      hint: "PLACEHOLDER — optional hint for stage 4.",
-      // Default plaintext: "stage4"
-      passwordHash: "f0a2f992de07a18a5e405328f42a5aa40c15470874bca6708f4d92190aaa9556",
-      reveal: "PLACEHOLDER — reveal text for stage 4."
+      title: "Washington Square Park",
+      location: "Washington Square Park — PLACEHOLDER: add the exact spot (the arch? the fountain?).",
+      clue: "PLACEHOLDER — your note for getting her to Washington Square Park.",
+      hint: "PLACEHOLDER — optional gentle nudge.",
+      answers: ["kiss"],
+      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
     },
     {
       number: 5,
-      title: "The Final Approach",
-      clue: "PLACEHOLDER — your fifth clue goes here.",
-      hint: "PLACEHOLDER — optional hint for stage 5.",
-      // Default plaintext: "stage5"
-      passwordHash: "65c8f9120c5164b07c7500563cde3e0984d838bf7308df576a7519989b51d433",
-      reveal: "PLACEHOLDER — reveal text for stage 5. Hint at what's coming."
+      title: "McNally Jackson Books",
+      location: "McNally Jackson Books — PLACEHOLDER: add the exact address / which location.",
+      clue: "PLACEHOLDER — your note for getting her to McNally Jackson.",
+      hint: "PLACEHOLDER — optional gentle nudge.",
+      // NOTE: you wrote "Men amor" — I assumed the Portuguese "meu amor".
+      // Both are accepted; remove either if you like.
+      answers: ["meu amor", "men amor"],
+      reveal: "PLACEHOLDER — what she discovers here, and where to head next."
     },
     {
       number: 6,
-      title: "The Heart's Resting Place",
-      clue: "PLACEHOLDER — your sixth and final clue.",
-      hint: "PLACEHOLDER — optional hint for the final stage.",
-      // Default plaintext: "stage6"
-      passwordHash: "e70045a5cc2d5c62af70e8edc9b03ab2d7abf14fd1ce3b734a98b099059c1758",
+      title: "Pier 25 Minigolf",
+      location: "Pier 25 Minigolf — PLACEHOLDER: add the exact spot she should reach.",
+      clue: "PLACEHOLDER — your note for the final stop, Pier 25 minigolf.",
+      hint: "PLACEHOLDER — optional gentle nudge.",
+      answers: ["saudades"],
       isFinal: true
       // (no `reveal` — solving stage 6 triggers the victory page below)
     }
