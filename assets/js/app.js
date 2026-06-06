@@ -16,6 +16,20 @@
     return;
   }
 
+  // Merge the editable clue text (assets/js/clues.js) into each stage, keyed
+  // by stage number. This lets the clues be written/edited in one dedicated
+  // file without touching the structural config here.
+  const CLUES = window.HUNT_CLUES || {};
+  if (Array.isArray(CONTENT.stages)) {
+    CONTENT.stages.forEach((stage) => {
+      const c = CLUES[stage.number];
+      if (!c) return;
+      ["clue", "hint", "locationDetail", "reveal"].forEach((key) => {
+        if (typeof c[key] === "string") stage[key] = c[key];
+      });
+    });
+  }
+
   // -------------------------------------------------------------------------
   //  Storage
   //  Stage progress persists across visits, but the master gate does NOT —
@@ -288,6 +302,20 @@
     return total;
   }
 
+  // A stage's location counts as confirmed once it's been guessed/revealed or
+  // the stage is fully solved.
+  function isLocationConfirmed(stage) {
+    return state.locationsConfirmed.includes(stage.number) ||
+           state.solved.includes(stage.number);
+  }
+
+  // The heading shown for a stage: the real place name once the location is
+  // confirmed, otherwise the non-revealing title.
+  function displayTitleFor(stage) {
+    if (isLocationConfirmed(stage) && stage.locationName) return stage.locationName;
+    return stage.title || `Stage ${stage.number}`;
+  }
+
   function renderStageCard() {
     const wrap = $("#stage-card");
     wrap.innerHTML = "";
@@ -313,12 +341,14 @@
     const attempts = state.attempts[stage.number] || 0;
     const hintRevealed = state.hintsShown.includes(stage.number) || attempts >= 3;
 
+    const locationConfirmed = isLocationConfirmed(stage);
+
     wrap.appendChild(el("p", { class: "stage-card__eyebrow" },
       `stage ${stage.number} of ${total}`));
-    wrap.appendChild(el("h2", { class: "stage-card__title" }, stage.title || `Stage ${stage.number}`));
-    wrap.appendChild(el("p", { class: "stage-card__clue" }, stage.clue || ""));
-
-    const locationConfirmed = state.locationsConfirmed.includes(stage.number);
+    wrap.appendChild(el("h2", { class: "stage-card__title" }, displayTitleFor(stage)));
+    // Clue is rendered as HTML so it can include light formatting (e.g. <u>,
+    // <em>, <br>) — handy for acrostics and emphasis.
+    wrap.appendChild(el("p", { class: "stage-card__clue", html: stage.clue || "" }));
 
     function confirmLocation() {
       if (!state.locationsConfirmed.includes(stage.number)) {
@@ -445,7 +475,7 @@
       if (s.isFinal || !s.reveal) continue;
       const card = el("div", { class: "reveal" });
       card.appendChild(el("div", { class: "reveal__head" }, [
-        el("span", null, `stage ${s.number} — ${s.title || ""}`),
+        el("span", null, `stage ${s.number} — ${displayTitleFor(s)}`),
         el("span", null, "unlocked ♡")
       ]));
       card.appendChild(el("p", { class: "reveal__body" }, s.reveal));
@@ -473,7 +503,7 @@
       });
       li.appendChild(el("span", { class: "roadmap__num" }, isDone ? "♡" : String(stage.number)));
       li.appendChild(el("div", null, [
-        el("p", { class: "roadmap__title" }, isLocked ? "—" : (stage.title || `Stage ${stage.number}`))
+        el("p", { class: "roadmap__title" }, isLocked ? "—" : displayTitleFor(stage))
       ]));
       li.appendChild(el("span", { class: "roadmap__status" },
         isDone ? "found" : isCurrent ? "you are here" : "locked"));

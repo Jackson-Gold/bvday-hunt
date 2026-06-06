@@ -76,26 +76,30 @@ window.HUNT_CONTENT = {
   /* -----------------------------------------------------------------------
    *  THE SIX STAGES (the real stops)
    *
+   *  >>> THE CLUE TEXT LIVES IN `assets/js/clues.js` <<<
+   *  Edit that file to write the clue, hint, location detail, and reveal for
+   *  each stop. This file just holds the structural bits below.
+   *
    *  The location is NOT given away. For each stop she sees the clue, then
    *  either guesses the location or taps "reveal location". Once confirmed,
-   *  the "Where to go" banner and the password field appear.
+   *  the "Where to go" banner and the password field appear, and the stop's
+   *  title becomes the real place name everywhere it shows.
    *
    *  Each stage has:
-   *    title           — a non-revealing heading (don't put the place here)
-   *    locationName    — the real place. Used for guess-matching AND shown in
-   *                      the "Where to go" banner once confirmed.
+   *    title           — a non-revealing heading shown BEFORE the location is
+   *                      confirmed (don't put the place here)
+   *    locationName    — the real place. Used for guess-matching, shown in the
+   *                      "Where to go" banner, and becomes the title once the
+   *                      location is guessed or revealed.
    *    locationAliases — optional extra spellings/nicknames accepted as a
    *                      correct guess. Guessing is very lenient (anything
    *                      close — partial names, typos — counts), so these are
    *                      just for safety.
-   *    locationDetail  — optional address / landmark shown under the place
-   *                      name once confirmed.
-   *    clue            — your riddle that leads her there (don't name it)
-   *    hint            — optional; appears after 3 wrong password attempts
    *    answers         — the password(s) she'll find AT the location. ANY one
    *                      unlocks the stage. Matching ignores case, spaces, and
    *                      accents and forgives small typos.
-   *    reveal          — shown after solving (point her toward the next stop)
+   *
+   *  (The clue / hint / locationDetail / reveal TEXT is in clues.js.)
    *
    *  Stage 6 is the FINAL stage and triggers the victory page.
    * --------------------------------------------------------------------- */
@@ -105,69 +109,45 @@ window.HUNT_CONTENT = {
       title: "The First Stop",
       locationName: "Bubs Bakery",
       locationAliases: ["bubs", "bubs bakery"],
-      locationDetail: "PLACEHOLDER — exact address / what she'll see when she's there.",
-      clue: "PLACEHOLDER — your riddle that leads her to Bubs Bakery (don't name it outright).",
-      hint: "PLACEHOLDER — optional gentle nudge.",
-      answers: ["cinnamon roll", "roll"],
-      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
+      answers: ["cinnamon roll", "roll"]
     },
     {
       number: 2,
       title: "The Second Stop",
       locationName: "Balade",
       locationAliases: ["balade"],
-      locationDetail: "PLACEHOLDER — exact address / what she'll see when she's there.",
-      clue: "PLACEHOLDER — your riddle that leads her to Balade (don't name it outright).",
-      hint: "PLACEHOLDER — optional gentle nudge.",
-      answers: ["lebanese"],
-      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
+      answers: ["lebanese"]
     },
     {
       number: 3,
       title: "The Third Stop",
       locationName: "Aum Shanti Bookshop",
       locationAliases: ["aum shanti", "aum shanti bookshop", "aum shanti book shop"],
-      locationDetail: "PLACEHOLDER — exact address / what she'll see when she's there.",
-      clue: "PLACEHOLDER — your riddle that leads her to Aum Shanti Bookshop (don't name it outright).",
-      hint: "PLACEHOLDER — optional gentle nudge.",
-      answers: ["amethyst", "rabbit", "bunny"],
-      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
+      answers: ["amethyst", "rabbit", "bunny"]
     },
     {
       number: 4,
       title: "The Fourth Stop",
       locationName: "Washington Square Park",
       locationAliases: ["washington square park", "washington square", "wsp", "the park"],
-      locationDetail: "PLACEHOLDER — the exact spot (the arch? the fountain?).",
-      clue: "PLACEHOLDER — your riddle that leads her to Washington Square Park (don't name it outright).",
-      hint: "PLACEHOLDER — optional gentle nudge.",
-      answers: ["kiss"],
-      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
+      answers: ["kiss"]
     },
     {
       number: 5,
       title: "The Fifth Stop",
       locationName: "McNally Jackson Books",
       locationAliases: ["mcnally jackson", "mcnally jackson books", "mcnally", "mcnallys"],
-      locationDetail: "PLACEHOLDER — exact address / which location.",
-      clue: "PLACEHOLDER — your riddle that leads her to McNally Jackson (don't name it outright).",
-      hint: "PLACEHOLDER — optional gentle nudge.",
       // NOTE: you wrote "Men amor" — I assumed the Portuguese "meu amor".
       // Both are accepted; remove either if you like.
-      answers: ["meu amor", "men amor"],
-      reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
+      answers: ["meu amor", "men amor"]
     },
     {
       number: 6,
       title: "The Final Stop",
       locationName: "Pier 25 Minigolf",
       locationAliases: ["pier 25", "pier 25 minigolf", "pier 25 mini golf", "minigolf", "mini golf"],
-      locationDetail: "PLACEHOLDER — the exact spot she should reach.",
-      clue: "PLACEHOLDER — your riddle that leads her to Pier 25 minigolf (don't name it outright).",
-      hint: "PLACEHOLDER — optional gentle nudge.",
       answers: ["saudades"],
       isFinal: true
-      // (no `reveal` — solving stage 6 triggers the victory page below)
     }
   ],
 
