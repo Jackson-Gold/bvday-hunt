@@ -569,6 +569,26 @@ a { color: var(--rose-soft); }
   box-shadow: 0 0 18px -10px rgba(255, 126, 179, 0.6);
 }
 
+.stage-card__hint-btn {
+  margin-top: 14px;
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px 2px;
+  cursor: pointer;
+  transition: color .2s;
+}
+.stage-card__hint-btn:hover {
+  color: var(--rose-soft);
+}
+
 .stage-card__clue {
   font-family: var(--serif);
   font-style: italic;

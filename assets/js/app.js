@@ -24,7 +24,7 @@
     CONTENT.stages.forEach((stage) => {
       const c = CLUES[stage.number];
       if (!c) return;
-      ["clue", "hint", "locationDetail", "reveal"].forEach((key) => {
+      ["clue", "hint", "passwordHint", "locationDetail", "reveal"].forEach((key) => {
         if (typeof c[key] === "string") stage[key] = c[key];
       });
     });
@@ -38,10 +38,11 @@
   const STORAGE_KEY = "hunt:v1:state";
 
   const defaultState = () => ({
-    solved: [],              // stage numbers (1..6) that have been solved
-    attempts: {},            // { [stageNumber]: numWrongAttempts }
-    hintsShown: [],          // stage numbers where the hint has been revealed
-    locationsConfirmed: []   // stage numbers whose location is guessed/revealed
+    solved: [],               // stage numbers (1..6) that have been solved
+    attempts: {},             // { [stageNumber]: numWrongAttempts }
+    hintsShown: [],           // stages where the LOCATION hint has been revealed
+    passwordHintsShown: [],   // stages where the PASSWORD hint has been revealed
+    locationsConfirmed: []    // stage numbers whose location is guessed/revealed
   });
   const loadState = () => {
     try {
@@ -316,6 +317,26 @@
     return stage.title || `Stage ${stage.number}`;
   }
 
+  // Renders a "need a hint?" button that, once tapped, reveals the hint text.
+  // `stateKey` is the state array tracking which stages have revealed this hint
+  // (e.g. "hintsShown" for the location hint, "passwordHintsShown" for the
+  // password hint), so the reveal persists across visits.
+  function appendHintSection(wrap, stage, hintText, stateKey, buttonLabel) {
+    if (!hintText) return;
+    if (state[stateKey].includes(stage.number)) {
+      wrap.appendChild(el("p", { class: "stage-card__hint" }, `hint — ${hintText}`));
+      return;
+    }
+    const btn = el("button", { type: "button", class: "stage-card__hint-btn" },
+      buttonLabel || "need a hint?");
+    btn.addEventListener("click", () => {
+      if (!state[stateKey].includes(stage.number)) state[stateKey].push(stage.number);
+      saveState();
+      renderStageCard();
+    });
+    wrap.appendChild(btn);
+  }
+
   function renderStageCard() {
     const wrap = $("#stage-card");
     wrap.innerHTML = "";
@@ -338,8 +359,6 @@
 
     wrap.classList.remove("stage-card--all-done");
     const stage = CONTENT.stages[idx];
-    const attempts = state.attempts[stage.number] || 0;
-    const hintRevealed = state.hintsShown.includes(stage.number) || attempts >= 3;
 
     const locationConfirmed = isLocationConfirmed(stage);
 
@@ -379,9 +398,8 @@
       wrap.appendChild(guessFeedback);
       wrap.appendChild(revealBtn);
 
-      if (hintRevealed && stage.hint) {
-        wrap.appendChild(el("p", { class: "stage-card__hint" }, `hint — ${stage.hint}`));
-      }
+      // Optional nudge toward the LOCATION, revealed on tap.
+      appendHintSection(wrap, stage, stage.hint, "hintsShown", "need a hint?");
 
       guessForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -414,10 +432,6 @@
       ]));
     }
 
-    if (hintRevealed && stage.hint) {
-      wrap.appendChild(el("p", { class: "stage-card__hint" }, `hint — ${stage.hint}`));
-    }
-
     const form = el("form", { class: "stage-card__form", autocomplete: "off", novalidate: true });
     const input = el("input", {
       type: "text",
@@ -434,6 +448,10 @@
     wrap.appendChild(form);
     wrap.appendChild(feedback);
 
+    // "need a hint?" button for the PASSWORD. Also auto-reveals after 3 wrong
+    // attempts (handled in the submit handler below).
+    appendHintSection(wrap, stage, stage.passwordHint, "passwordHintsShown", "need a hint?");
+
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       if (!input.value) return;
@@ -449,15 +467,15 @@
         }, 700);
       } else {
         state.attempts[stage.number] = (state.attempts[stage.number] || 0) + 1;
-        if (state.attempts[stage.number] >= 3 && !state.hintsShown.includes(stage.number)) {
-          state.hintsShown.push(stage.number);
-        }
+        const autoReveal = state.attempts[stage.number] >= 3 && stage.passwordHint &&
+                           !state.passwordHintsShown.includes(stage.number);
+        if (autoReveal) state.passwordHintsShown.push(stage.number);
         saveState();
         wrap.classList.remove("is-shaking"); void wrap.offsetWidth;
         wrap.classList.add("is-shaking");
         feedback.textContent = "not quite. listen closer.";
-        if (state.attempts[stage.number] >= 3 && stage.hint) {
-          // re-render so the hint appears
+        if (autoReveal) {
+          // re-render so the password hint appears
           setTimeout(renderStageCard, 350);
         }
         input.select();
