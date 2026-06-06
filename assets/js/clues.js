@@ -71,35 +71,38 @@ window.HUNT_CLUES = {
   4: {
     clue:
       "Time for some fresh air. Head to the famous square with the grand arch " +
-      "and the fountain at its heart, where students gather and the city comes " +
-      "to people-watch. Meet me under the arch for a kiss.",
-    locationDetail: "PLACEHOLDER — the exact spot (the arch? the fountain?).",
-    hint: "PLACEHOLDER — optional gentle nudge toward the location.",
-    passwordHint: "PLACEHOLDER — optional nudge toward the password.",
-    reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
+      "and the fountain at its heart, where we sharted my favorite kiss of the summer. " +
+      "Cant wait to come back here with you soon and give you another one!" +
+      "Look for the password underneither a bench looking directly at the fountain.",
+    locationDetail: "Washington Square Park",
+    hint: "",
+    passwordHint: "If you're under the arch the bench is at 9:00 o'clock on the one adjacent to the walkway under the first panel. There is unfortunaly a good chance someone removed it but I hope its there still!",
+    reveal: "You killed that! Onto the next stop!"
   },
 
   /* ---- Stop 5 · McNally Jackson Books ---------------------------------- */
   5: {
     clue:
-      "Back to the world of books, but a bigger one this time — a beloved " +
-      "bookstore where you could lose hours among the shelves. Find a quiet " +
-      "corner there and whisper what I always call you.",
-    locationDetail: "PLACEHOLDER — exact address / which location.",
+      "Back down south a bit to a bookstore with my name in it — a place " +
+      "where you could lose hours among the shelves. Find a quiet " +
+      "corner there and find a book about Graziano's take on a feeling I have alot of for you." +
+      "Once you find what you're looking for make sure to go to the front and pick up the book I left for you! (under your last name)",
+    locationDetail: "McNally Jackson Books, 134 Prince St, New York, NY 10012, United States",
     hint: "PLACEHOLDER — optional gentle nudge toward the location.",
-    passwordHint: "PLACEHOLDER — optional nudge toward the password.",
-    reveal: "PLACEHOLDER — what she discovers here, and a hint toward the next stop."
+    passwordHint: "It is a card in the back cover of a copy of Love, by Michael S. Graziano. Go to the back right corner and turn around. You'll see it straigt ahead in the little nook in front of you!",
+    reveal: "I know you're going to love this book! I can't wait to read it with you!"
   },
 
   /* ---- Stop 6 · Pier 25 Minigolf (FINAL) ------------------------------- */
   6: {
     clue:
       "Last stop — out to the water's edge, to a pier on the river where you " +
-      "can putt a little ball through windmills and tunnels. Meet me there for " +
-      "one more game, and you'll find me at the end of it.",
-    locationDetail: "PLACEHOLDER — the exact spot she should reach.",
+      "can putt a little ball through windmills and tunnels. A place where I 100% beat you " +
+      "and desperatly need a rematch!" +
+      "Look for the password on the front of a bench facing the water.",
+    locationDetail: "Pier 25 Mini Golf, 225 West St, New York, NY 10013, United States",
     hint: "PLACEHOLDER — optional gentle nudge toward the location.",
-    passwordHint: "PLACEHOLDER — optional nudge toward the password.",
+    passwordHint: "On the first bench on the right side after you pass by the entrance to mini golf.",
     reveal: "" // no reveal — solving stop 6 triggers the victory page
   }
 
