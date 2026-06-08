@@ -889,6 +889,9 @@ a { color: var(--rose-soft); }
   line-height: 1.6;
   color: var(--text-dim);
 }
+.howto__videos {
+  margin: 0 0 24px;
+}
 .howto__note {
   margin: 0 0 24px;
   padding: 14px 16px;

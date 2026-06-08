@@ -79,13 +79,24 @@ window.HUNT_CONTENT = {
     steps: [
       { icon: "✦", text: "Each stop opens with a clue. Read it, then guess where you think you're headed — or tap reveal location if you'd rather just be told." },
       { icon: "📍", text: "Once the place is confirmed, a “Where to go” banner shows the spot. Make your way there." },
-      { icon: "🔑", text: "At each location you'll find a password. Type it in to unlock the stop and reveal where to go next." },
+      { icon: "🔑", text: "At each location you'll find a password. Most of them are in the same format as the card you have, tap your phone to it and you will see the password. Type it in to unlock the stop and reveal where to go next." },
       { icon: "💡", text: "Stuck? Tap “need a hint?” for a nudge — a hint also appears on its own after a few wrong tries." },
-      { icon: "♫", text: "Peek at the Entertainment tab for a playlist and a folder of memories to keep you company on the way." },
-      { icon: "♡", text: "Six stops in all. Find every one, and you'll find me at the end." }
+      { icon: "♫", text: "Check out the Entertainment tab for a playlist and a folder of memories to keep you company on the way." },
+      { icon: "♡", text: "There is an intro vide you should watch before you start under the entertainment button. Everything is actually hidden in public around the city so something may go wrong. There is a doc of all the passwords and exactly what should happen if something goes wrong." }
     ],
     note: "Your progress saves automatically, so you can close this and pick up right where you left off.",
-    buttonLabel: "Begin the hunt ♡"
+    buttonLabel: "Begin the hunt ♡",
+
+    // Optional: a Google Drive folder of instructional videos, embedded on this
+    // page (between the steps and the note). Encrypted with the master password,
+    // just like the entertainment links — change it via tools/secrets.html.
+    // NOTE: the folder must be shared "Anyone with the link can view" for the
+    // preview grid to appear.
+    videos: {
+      title: "Watch these first",
+      blurb: "A few short videos walking you through it.",
+      enc: "v1.wIY2SDlDMzrWY4+kFiYo2g==.V8gph/f9R8sODS7D.d3zZrcHCNpioJPGHt0uIummLXRkQ00FGfEvGtHC8haLEUF1+0+7cKwrOu57nXGic7UbkEaK1ZYKenuZEjFZmgu+FCItX7dmExHt7uenuB31rAQf0pzEDoQ=="
+    }
   },
 
   /* -----------------------------------------------------------------------

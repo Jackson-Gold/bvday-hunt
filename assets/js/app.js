@@ -553,6 +553,14 @@
       card.appendChild(list);
     }
 
+    // Instructional videos (Google Drive folder) — slots in between the steps
+    // and the note. Filled asynchronously after the encrypted link is decrypted.
+    if (cfg.videos && cfg.videos.enc) {
+      const videosWrap = el("div", { class: "howto__videos" });
+      card.appendChild(videosWrap);
+      fillDriveEmbed(videosWrap, cfg.videos);
+    }
+
     if (cfg.note) card.appendChild(el("p", { class: "howto__note" }, cfg.note));
 
     const cta = el("button", { type: "button", class: "howto__cta" }, cfg.buttonLabel || "Begin the hunt ♡");
@@ -737,6 +745,42 @@
       el("span", { class: "vault__icon", "aria-hidden": "true" }, "🔒"),
       el("p", { class: "vault__blurb" }, `${label} — unlocks at stage ${item.unlockAtStage}`)
     ]);
+  }
+
+  // Decrypts a Drive-folder link and renders it as a preview-grid card (same
+  // format as the Entertainment vault). Used by the instructions page.
+  async function fillDriveEmbed(container, cfg) {
+    const url = await decryptSecret(masterPassword, cfg.enc);
+    const id = driveIdFrom(url);
+    const card = el("div", { class: "vault__card vault__card--drive" });
+    card.appendChild(el("div", { class: "vault__head" }, [
+      el("span", { class: "vault__icon", "aria-hidden": "true" }, "▶"),
+      el("div", null, [
+        el("h3", { class: "vault__title" }, cfg.title || "Videos"),
+        cfg.blurb ? el("p", { class: "vault__blurb" }, cfg.blurb) : false
+      ])
+    ]));
+    if (id) {
+      card.appendChild(el("iframe", {
+        class: "vault__drive",
+        src: `https://drive.google.com/embeddedfolderview?id=${id}#grid`,
+        width: "100%",
+        height: "420",
+        frameborder: "0",
+        loading: "lazy",
+        title: cfg.title || "Instructional videos"
+      }));
+      card.appendChild(el("a", {
+        class: "vault__open",
+        href: url,
+        target: "_blank",
+        rel: "noopener noreferrer"
+      }, "open in Google Drive ↗"));
+    } else {
+      card.appendChild(el("p", { class: "vault__error" }, vaultDecryptError()));
+    }
+    container.innerHTML = "";
+    container.appendChild(card);
   }
 
   function renderAll() {
