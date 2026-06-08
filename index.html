@@ -122,15 +122,23 @@
         </div>
       </div>
       <nav class="tabs" role="tablist" aria-label="Sections">
-        <button class="tab is-active" role="tab" data-tab="hunt" aria-selected="true">The Hunt</button>
+        <button class="tab is-active" role="tab" data-tab="start" aria-selected="true">Start Here</button>
+        <button class="tab" role="tab" data-tab="hunt" aria-selected="false">The Hunt</button>
         <button class="tab" role="tab" data-tab="map" aria-selected="false">Map</button>
         <button class="tab" role="tab" data-tab="vault" aria-selected="false">Entertainment</button>
       </nav>
       <button id="reset-btn" class="ghost-btn" type="button" title="Reset progress">reset</button>
     </header>
 
+    <!-- ============== TAB: START HERE / INSTRUCTIONS ============== -->
+    <section id="tab-start" class="tab-panel is-active" role="tabpanel">
+      <div class="howto" id="howto" aria-live="polite">
+        <!-- populated by JS -->
+      </div>
+    </section>
+
     <!-- ============== TAB: THE HUNT ============== -->
-    <section id="tab-hunt" class="tab-panel is-active" role="tabpanel">
+    <section id="tab-hunt" class="tab-panel" role="tabpanel" hidden>
       <div class="stage-card" id="stage-card" aria-live="polite">
         <!-- populated by JS -->
       </div>
@@ -155,11 +163,7 @@
       <h2 class="section-title">The Vault</h2>
       <p class="section-sub" id="vault-intro"></p>
 
-      <h3 class="subsection-title">Sounds</h3>
-      <div id="audio-list" class="media-list media-list--audio"></div>
-
-      <h3 class="subsection-title">Moving Pictures</h3>
-      <div id="video-list" class="media-list media-list--video"></div>
+      <div id="vault-content" class="vault"></div>
     </section>
 
     <footer class="app__footer">

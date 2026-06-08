@@ -61,6 +61,9 @@
   let state = loadState();
   // gateUnlocked is in-memory only — the locked door always appears on fresh visits
   let gateUnlocked = false;
+  // The master password, kept in memory only (never persisted). Used as the key
+  // to decrypt the vault links, which are stored encrypted in content.js.
+  let masterPassword = "";
 
   // -------------------------------------------------------------------------
   //  Crypto — the master gate stays hashed (exact, never in source).
@@ -79,6 +82,45 @@
     if (!expectedHash) return false;
     const h = await sha256Hex(normalize(input));
     return h === String(expectedHash).trim().toLowerCase();
+  }
+
+  // -------------------------------------------------------------------------
+  //  Vault secret decryption
+  //  The entertainment links live in content.js as AES-GCM ciphertext, keyed
+  //  by the master password (PBKDF2-derived). They're decrypted in-browser
+  //  only after the gate is unlocked — the plaintext URLs are never in source.
+  //  These params MUST match tools/secrets.html (and tools/gen-secrets.mjs).
+  // -------------------------------------------------------------------------
+  const PBKDF2_ITERS = 150000;
+  const b64ToBytes = (b64) =>
+    Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+
+  async function deriveVaultKey(password, salt) {
+    const baseKey = await crypto.subtle.importKey(
+      "raw", new TextEncoder().encode(normalize(password)), "PBKDF2", false, ["deriveKey"]
+    );
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt, iterations: PBKDF2_ITERS, hash: "SHA-256" },
+      baseKey,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["decrypt"]
+    );
+  }
+
+  async function decryptSecret(password, blob) {
+    const parts = String(blob || "").split(".");
+    if (parts.length !== 4 || parts[0] !== "v1") return null;
+    try {
+      const salt = b64ToBytes(parts[1]);
+      const iv   = b64ToBytes(parts[2]);
+      const ct   = b64ToBytes(parts[3]);
+      const key  = await deriveVaultKey(password, salt);
+      const pt   = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+      return new TextDecoder().decode(pt);
+    } catch {
+      return null; // wrong password, or links not re-encrypted after a change
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -238,6 +280,7 @@
     const ok = await passwordMatches(value, CONTENT.masterPasswordHash);
     if (ok) {
       gateUnlocked = true;
+      masterPassword = value;
       clearError();
       enterApp();
     } else {
@@ -265,20 +308,23 @@
   // -------------------------------------------------------------------------
   //  Tab switching
   // -------------------------------------------------------------------------
-  $$(".tab").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const target = btn.dataset.tab;
-      $$(".tab").forEach((b) => {
-        const on = b === btn;
-        b.classList.toggle("is-active", on);
-        b.setAttribute("aria-selected", on ? "true" : "false");
-      });
-      $$(".tab-panel").forEach((p) => {
-        const on = p.id === `tab-${target}`;
-        p.classList.toggle("is-active", on);
-        p.hidden = !on;
-      });
+  function activateTab(target) {
+    $$(".tab").forEach((b) => {
+      const on = b.dataset.tab === target;
+      b.classList.toggle("is-active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
     });
+    $$(".tab-panel").forEach((p) => {
+      const on = p.id === `tab-${target}`;
+      p.classList.toggle("is-active", on);
+      p.hidden = !on;
+    });
+    // Bring the freshly shown panel into view (nice on mobile).
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  $$(".tab").forEach((btn) => {
+    btn.addEventListener("click", () => activateTab(btn.dataset.tab));
   });
 
   // -------------------------------------------------------------------------
@@ -485,6 +531,39 @@
     setTimeout(() => input.focus({ preventScroll: true }), 50);
   }
 
+  function renderInstructions() {
+    const wrap = $("#howto");
+    if (!wrap || wrap.dataset.built === "1") return; // static — build once
+    const cfg = CONTENT.instructions || {};
+
+    const card = el("div", { class: "howto__card" });
+    if (cfg.eyebrow) card.appendChild(el("p", { class: "howto__eyebrow" }, cfg.eyebrow));
+    card.appendChild(el("h2", { class: "howto__title" }, cfg.title || "How it works"));
+    if (cfg.intro) card.appendChild(el("p", { class: "howto__intro" }, cfg.intro));
+
+    const steps = Array.isArray(cfg.steps) ? cfg.steps : [];
+    if (steps.length) {
+      const list = el("ol", { class: "howto__steps" });
+      steps.forEach((s) => {
+        list.appendChild(el("li", { class: "howto__step" }, [
+          el("span", { class: "howto__icon", "aria-hidden": "true" }, s.icon || "♡"),
+          el("span", { class: "howto__text" }, s.text || "")
+        ]));
+      });
+      card.appendChild(list);
+    }
+
+    if (cfg.note) card.appendChild(el("p", { class: "howto__note" }, cfg.note));
+
+    const cta = el("button", { type: "button", class: "howto__cta" }, cfg.buttonLabel || "Begin the hunt ♡");
+    cta.addEventListener("click", () => activateTab("hunt"));
+    card.appendChild(cta);
+
+    wrap.innerHTML = "";
+    wrap.appendChild(card);
+    wrap.dataset.built = "1";
+  }
+
   function renderReveals() {
     const wrap = $("#reveals");
     wrap.innerHTML = "";
@@ -536,59 +615,132 @@
   }
 
   function isItemUnlocked(item) {
-    if (!item.unlockAtStage) return true;
+    if (!item || !item.unlockAtStage) return true;
     return state.solved.includes(Number(item.unlockAtStage));
   }
 
-  function renderVault() {
-    $("#vault-intro").textContent = CONTENT.entertainment?.intro || "";
+  // Decrypted vault URLs are cached so we only run the (deliberately slow) key
+  // derivation once, and so the Spotify player doesn't reload on every render.
+  let vaultUrls = null;
+  let vaultRenderedKey = "";
 
-    const audioList = $("#audio-list");
-    const videoList = $("#video-list");
-    audioList.innerHTML = "";
-    videoList.innerHTML = "";
+  const spotifyIdFrom = (url) => (String(url || "").match(/playlist\/([A-Za-z0-9]+)/) || [])[1] || null;
+  const driveIdFrom   = (url) => (String(url || "").match(/folders\/([A-Za-z0-9_-]+)/) || [])[1] || null;
 
-    const audio = CONTENT.entertainment?.audio || [];
-    const videos = CONTENT.entertainment?.videos || [];
+  async function renderVault() {
+    const ent = CONTENT.entertainment || {};
+    $("#vault-intro").textContent = ent.intro || "";
+    const root = $("#vault-content");
+    if (!root) return;
 
-    if (audio.length === 0) {
-      audioList.appendChild(el("div", { class: "media-empty" }, "no audio yet — drop files in assets/media/audio/"));
-    } else {
-      audio.forEach((item) => {
-        if (!isItemUnlocked(item)) {
-          audioList.appendChild(el("div", { class: "media-locked" },
-            `something to hear — unlocks at stage ${item.unlockAtStage}`));
-          return;
-        }
-        const card = el("div", { class: "media-card" });
-        card.appendChild(el("h4", { class: "media-card__title" }, item.title || "untitled"));
-        if (item.artist) card.appendChild(el("p", { class: "media-card__sub" }, item.artist));
-        const a = el("audio", { controls: true, preload: "none", src: item.src });
-        card.appendChild(a);
-        audioList.appendChild(card);
-      });
+    const sUnlocked = ent.spotify ? isItemUnlocked(ent.spotify) : false;
+    const dUnlocked = ent.drive   ? isItemUnlocked(ent.drive)   : false;
+
+    // Only rebuild when the set of visible items changes — keeps the embedded
+    // player from reloading every time a stage is solved.
+    const key = `s:${!!ent.spotify}/${sUnlocked}|d:${!!ent.drive}/${dUnlocked}`;
+    if (key === vaultRenderedKey) return;
+    vaultRenderedKey = key;
+    root.innerHTML = "";
+
+    if (!ent.spotify && !ent.drive) {
+      root.appendChild(el("p", { class: "vault__empty" },
+        "Nothing here yet — add a Spotify playlist or Drive folder in content.js."));
+      return;
     }
 
-    if (videos.length === 0) {
-      videoList.appendChild(el("div", { class: "media-empty" }, "no video yet — drop files in assets/media/video/"));
-    } else {
-      videos.forEach((item) => {
-        if (!isItemUnlocked(item)) {
-          videoList.appendChild(el("div", { class: "media-locked" },
-            `something to see — unlocks at stage ${item.unlockAtStage}`));
-          return;
+    // Decrypt once and cache.
+    if (!vaultUrls) {
+      vaultUrls = {
+        spotify: ent.spotify?.enc ? await decryptSecret(masterPassword, ent.spotify.enc) : null,
+        drive:   ent.drive?.enc   ? await decryptSecret(masterPassword, ent.drive.enc)   : null
+      };
+    }
+
+    // ---- Spotify ----
+    if (ent.spotify) {
+      if (!sUnlocked) {
+        root.appendChild(lockedCard(ent.spotify, "a playlist"));
+      } else {
+        const card = el("div", { class: "vault__card vault__card--spotify" });
+        card.appendChild(el("div", { class: "vault__head" }, [
+          el("span", { class: "vault__icon", "aria-hidden": "true" }, "♫"),
+          el("div", null, [
+            el("h3", { class: "vault__title" }, ent.spotify.title || "Playlist"),
+            ent.spotify.blurb ? el("p", { class: "vault__blurb" }, ent.spotify.blurb) : false
+          ])
+        ]));
+        const id = spotifyIdFrom(vaultUrls.spotify);
+        if (id) {
+          card.appendChild(el("iframe", {
+            class: "vault__spotify",
+            src: `https://open.spotify.com/embed/playlist/${id}?utm_source=generator`,
+            width: "100%",
+            height: "380",
+            frameborder: "0",
+            allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture",
+            loading: "lazy",
+            title: ent.spotify.title || "Spotify playlist"
+          }));
+        } else {
+          card.appendChild(el("p", { class: "vault__error" }, vaultDecryptError()));
         }
-        const card = el("div", { class: "media-card" });
-        card.appendChild(el("h4", { class: "media-card__title" }, item.title || "untitled"));
-        const v = el("video", { controls: true, preload: "metadata", src: item.src, playsinline: true });
-        if (item.poster) v.setAttribute("poster", item.poster);
-        card.appendChild(v);
-        videoList.appendChild(card);
-      });
+        root.appendChild(card);
+      }
+    }
+
+    // ---- Google Drive ----
+    if (ent.drive) {
+      if (!dUnlocked) {
+        root.appendChild(lockedCard(ent.drive, "a folder of memories"));
+      } else {
+        const card = el("div", { class: "vault__card vault__card--drive" });
+        card.appendChild(el("div", { class: "vault__head" }, [
+          el("span", { class: "vault__icon", "aria-hidden": "true" }, "❤"),
+          el("div", null, [
+            el("h3", { class: "vault__title" }, ent.drive.title || "Folder"),
+            ent.drive.blurb ? el("p", { class: "vault__blurb" }, ent.drive.blurb) : false
+          ])
+        ]));
+        const id = driveIdFrom(vaultUrls.drive);
+        if (id) {
+          card.appendChild(el("iframe", {
+            class: "vault__drive",
+            src: `https://drive.google.com/embeddedfolderview?id=${id}#grid`,
+            width: "100%",
+            height: "420",
+            frameborder: "0",
+            loading: "lazy",
+            title: ent.drive.title || "Google Drive folder"
+          }));
+          card.appendChild(el("a", {
+            class: "vault__open",
+            href: vaultUrls.drive,
+            target: "_blank",
+            rel: "noopener noreferrer"
+          }, "open in Google Drive ↗"));
+        } else {
+          card.appendChild(el("p", { class: "vault__error" }, vaultDecryptError()));
+        }
+        root.appendChild(card);
+      }
     }
   }
 
+  function vaultDecryptError() {
+    return "Couldn't unlock this — if you changed the master password, " +
+           "re-encrypt the links with tools/secrets.html.";
+  }
+
+  function lockedCard(item, label) {
+    return el("div", { class: "vault__card vault__card--locked" }, [
+      el("span", { class: "vault__icon", "aria-hidden": "true" }, "🔒"),
+      el("p", { class: "vault__blurb" }, `${label} — unlocks at stage ${item.unlockAtStage}`)
+    ]);
+  }
+
   function renderAll() {
+    renderInstructions();
     renderStageCard();
     renderReveals();
     renderRoadmap();

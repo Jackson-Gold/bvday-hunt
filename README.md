@@ -83,27 +83,33 @@ Only the **site entry** password is hashed (so it isn't readable in source). To 
 
 > Why aren't the stage passwords hashed? Forgiving typos requires comparing the typed text to the real word, which a one-way hash can't do. The stop names and clues already live in `content.js` in plain text, so the hunt's secrecy comes from the physical experience — don't put anything you need truly hidden into the clues.
 
-### Adding media
+### The entertainment vault (Spotify + Google Drive)
 
-Drop files into:
+Rather than uploading lots of media to the repo, the vault links out to a **Spotify playlist** (shown as an embedded player) and a **Google Drive folder** (shown as an embedded preview grid plus an "open" button). Both links are **encrypted with the master password**, so the real URLs never appear in the source — someone browsing the repo can't grab them. They're decrypted in the browser only after she unlocks the gate (the master password is the decryption key, and only its hash lives in the source).
 
-- `assets/media/audio/` — for MP3 / M4A / WAV / OGG
-- `assets/media/video/` — for MP4 / WebM (MP4/H.264 is most compatible)
-
-Then add them in the `entertainment` section of `content.js`:
+They're configured in the `entertainment` section of `content.js`:
 
 ```js
-audio: [
-  { title: "Our song", artist: "the band", src: "assets/media/audio/our-song.mp3" }
-],
-videos: [
-  { title: "A memory", src: "assets/media/video/memory.mp4", unlockAtStage: 3 }
-]
+entertainment: {
+  intro: "A playlist for the road and a folder of little memories.",
+  spotify: { title: "Our playlist",  blurb: "Songs for you.",      enc: "v1.…" },
+  drive:   { title: "Our little vault", blurb: "Photos & videos.",  enc: "v1.…" }
+}
 ```
 
-The optional `unlockAtStage` field hides the item until that stage is solved.
+**To change a link** (or after changing the master password):
 
-> GitHub has a soft 100 MB per-file limit and a recommended 1 GB repo limit. For large videos, consider compressing them (handbrake, ffmpeg) or hosting on YouTube/Vimeo and embedding via a custom iframe.
+1. Open **`tools/secrets.html`** in any browser (locally, or at `https://<your-user>.github.io/<repo>/tools/secrets.html`).
+2. Type your **master password** and paste the new Spotify/Drive URL.
+3. Copy the encrypted `v1.…` blob it produces into the matching `enc` field in `content.js`.
+
+> ⚠️ If you change the master password, you must re-encrypt **every** vault link with the new password, or they won't open on the site.
+
+Notes:
+
+- Add an optional `unlockAtStage: 3` to either item to keep it hidden until that stage is solved.
+- For the Drive **preview grid** to show, the folder must be shared "Anyone with the link." The encryption keeps the link out of the repo, but anyone she shares her screen/device with can still open it — that's the intended audience.
+- Spotify/Drive embeds require an internet connection (they won't appear when viewing the page fully offline).
 
 ## Deploying to GitHub Pages
 
@@ -156,13 +162,14 @@ For a romantic scavenger hunt this is totally fine, but **don't put anything sec
 ├── assets/
 │   ├── css/style.css       # midnight + rose pink theme
 │   ├── js/
-│   │   ├── content.js      # ← EDIT THIS to customize the hunt
+│   │   ├── content.js      # ← structural config (passwords, locations, vault)
+│   │   ├── clues.js        # ← EDIT THIS for clue / hint / reveal text
 │   │   └── app.js          # app logic (no need to edit)
 │   └── media/
-│       ├── audio/          # drop audio files here
-│       └── video/          # drop video files here
+│       └── …               # optional local files (e.g. victory finale)
 ├── tools/
-│   └── hash.html           # SHA-256 password hash generator
+│   ├── hash.html           # SHA-256 password hash generator (master password)
+│   └── secrets.html        # encrypt Spotify / Drive vault links
 ├── .github/workflows/
 │   └── pages.yml           # auto-deploy to GitHub Pages
 ├── .nojekyll               # tell Pages not to run Jekyll

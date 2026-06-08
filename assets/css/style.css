@@ -817,6 +817,110 @@ a { color: var(--rose-soft); }
 .progress__label span { color: var(--rose-soft); font-weight: 500; }
 
 /* -----------------------------------------------------------------------------
+ *  HOW-TO / START HERE
+ * --------------------------------------------------------------------------- */
+.howto__card {
+  position: relative;
+  padding: 32px 28px;
+  background: linear-gradient(160deg, rgba(30, 24, 70, 0.7), rgba(11, 16, 48, 0.78));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px) saturate(120%);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+}
+.howto__eyebrow {
+  font-family: var(--sans);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--rose-soft);
+  margin: 0 0 8px;
+}
+.howto__title {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: clamp(26px, 4vw, 34px);
+  margin: 0 0 14px;
+  background: linear-gradient(120deg, #fff 0%, var(--rose-soft) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.howto__intro {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text);
+  margin: 0 0 24px;
+}
+.howto__steps {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.howto__step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255, 126, 179, 0.06);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.howto__icon {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 126, 179, 0.14);
+  color: var(--rose);
+  font-size: 16px;
+}
+.howto__text {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-dim);
+}
+.howto__note {
+  margin: 0 0 24px;
+  padding: 14px 16px;
+  border-left: 2px solid var(--rose);
+  background: rgba(255, 126, 179, 0.08);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--rose-soft);
+  font-size: 14px;
+}
+.howto__cta {
+  width: 100%;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 16px 22px;
+  border-radius: 999px;
+  color: #2a0f22;
+  background: linear-gradient(120deg, var(--rose-soft), var(--rose));
+  box-shadow: 0 12px 30px -12px rgba(255, 126, 179, 0.8);
+  transition: transform .15s, box-shadow .2s, filter .2s;
+}
+.howto__cta:hover { filter: brightness(1.05); box-shadow: 0 16px 36px -12px rgba(255, 126, 179, 0.9); }
+.howto__cta:active { transform: translateY(1px); }
+
+/* -----------------------------------------------------------------------------
  *  MEDIA / VAULT
  * --------------------------------------------------------------------------- */
 .media-list {
@@ -882,6 +986,99 @@ a { color: var(--rose-soft); }
   content: "🔒";
   font-size: 18px;
   filter: grayscale(0.4) hue-rotate(-20deg);
+}
+
+/* ---- Vault: Spotify + Drive cards ---------------------------------------- */
+.vault {
+  display: grid;
+  gap: 20px;
+}
+.vault__empty {
+  padding: 18px;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--text-muted);
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+.vault__card {
+  padding: 18px;
+  background: linear-gradient(160deg, rgba(30, 24, 70, 0.55), rgba(11, 16, 48, 0.55));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.vault__card--locked {
+  flex-direction: row;
+  align-items: center;
+  border-style: dashed;
+  color: var(--text-muted);
+}
+.vault__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.vault__icon {
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--rose);
+  flex: 0 0 auto;
+}
+.vault__title {
+  font-family: var(--serif);
+  font-size: 20px;
+  margin: 0;
+  color: var(--text);
+}
+.vault__blurb {
+  margin: 2px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--rose-soft);
+  font-size: 14px;
+}
+.vault__spotify {
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  display: block;
+}
+.vault__drive {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(7, 10, 34, 0.7);
+  display: block;
+}
+.vault__open {
+  align-self: flex-start;
+  appearance: none;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--sans);
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  border-radius: 999px;
+  transition: color .2s, border-color .2s, box-shadow .2s;
+}
+.vault__open:hover {
+  color: var(--rose-soft);
+  border-color: var(--rose-soft);
+  box-shadow: 0 0 18px -10px rgba(255, 126, 179, 0.6);
+}
+.vault__error {
+  margin: 0;
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: 14px;
 }
 
 /* -----------------------------------------------------------------------------
@@ -1065,6 +1262,15 @@ a { color: var(--rose-soft); }
   .reveal { padding: 14px 16px; border-radius: 12px; }
   .reveal__body { font-size: 15px; }
   .reveal__head { font-size: 10px; letter-spacing: 1.5px; }
+
+  .howto__card    { padding: 24px 20px; border-radius: 18px; }
+  .howto__eyebrow { font-size: 10px; letter-spacing: 2.5px; }
+  .howto__intro   { font-size: 16px; }
+  .howto__step    { padding: 12px 14px; gap: 12px; }
+  .howto__icon    { width: 30px; height: 30px; font-size: 15px; }
+  .howto__text    { font-size: 15px; }
+  .howto__note    { font-size: 13px; padding: 12px 14px; }
+  .howto__cta     { font-size: 13px; padding: 15px 18px; }
 
   .section-title    { font-size: 24px; }
   .section-sub      { font-size: 15px; margin-bottom: 18px; }

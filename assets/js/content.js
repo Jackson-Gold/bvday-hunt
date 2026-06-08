@@ -67,6 +67,28 @@ window.HUNT_CONTENT = {
   },
 
   /* -----------------------------------------------------------------------
+   *  INSTRUCTIONS PAGE ("Start Here" tab)
+   *  The first thing she sees after unlocking the door. She can return to it
+   *  any time via the tab, and tap the button to jump into the hunt.
+   *  Edit any of the text below.
+   * --------------------------------------------------------------------- */
+  instructions: {
+    eyebrow: "how it works",
+    title: "Welcome, meu amor",
+    intro: "I made you a little adventure. Here's how to play — come back to this page anytime you need it.",
+    steps: [
+      { icon: "✦", text: "Each stop opens with a clue. Read it, then guess where you think you're headed — or tap reveal location if you'd rather just be told." },
+      { icon: "📍", text: "Once the place is confirmed, a “Where to go” banner shows the spot. Make your way there." },
+      { icon: "🔑", text: "At each location you'll find a password. Type it in to unlock the stop and reveal where to go next." },
+      { icon: "💡", text: "Stuck? Tap “need a hint?” for a nudge — a hint also appears on its own after a few wrong tries." },
+      { icon: "♫", text: "Peek at the Entertainment tab for a playlist and a folder of memories to keep you company on the way." },
+      { icon: "♡", text: "Six stops in all. Find every one, and you'll find me at the end." }
+    ],
+    note: "Your progress saves automatically, so you can close this and pick up right where you left off.",
+    buttonLabel: "Begin the hunt ♡"
+  },
+
+  /* -----------------------------------------------------------------------
    *  MASTER GATE PASSWORD
    *  This is the password required to ENTER the site at all.
    *  Default plaintext: "love"
@@ -168,34 +190,36 @@ window.HUNT_CONTENT = {
 
   /* -----------------------------------------------------------------------
    *  ENTERTAINMENT SECTION
-   *  Audio + video to play while on the hunt. Available after the master
-   *  gate. Optionally, set `unlockAtStage` on any item to keep it hidden
-   *  until that stage is solved (1–6). Leave it out to show immediately.
+   *
+   *  Instead of uploading lots of media to the repo, this links out to a
+   *  Spotify playlist and a Google Drive folder. Both links are ENCRYPTED with
+   *  the master password, so the real URLs never appear in the source code —
+   *  someone browsing the GitHub repo can't grab them. They're decrypted in the
+   *  browser only after she unlocks the gate (the master password is the key,
+   *  and only its hash — not the password itself — lives in this file).
+   *
+   *  >>> HOW TO CHANGE THESE LINKS <<<
+   *  Open `tools/secrets.html`, type your MASTER password, paste the new URL,
+   *  and copy the encrypted blob it gives you into `enc` below. If you ever
+   *  change the master password, re-encrypt BOTH links the same way.
    * --------------------------------------------------------------------- */
   entertainment: {
-    intro: "Soundtrack and little memories for the road. Press play whenever you need a smile.",
+    intro: "A playlist for the road and a folder of little memories. Press play, and peek whenever you need a smile.",
 
-    audio: [
-      {
-        title: "PLACEHOLDER — a song for you",
-        artist: "PLACEHOLDER — artist or 'me'",
-        src: "assets/media/audio/track-1.mp3"
-        // unlockAtStage: 2
-      },
-      {
-        title: "PLACEHOLDER — a voice note",
-        artist: "from me",
-        src: "assets/media/audio/track-2.mp3"
-      }
-    ],
+    // Spotify playlist — shows as an embedded player on the site.
+    spotify: {
+      title: "Our playlist",
+      blurb: "Songs for you to walk to.",
+      enc: "v1.WPIa7GkKBM6VU7GO/HWZUA==.Jt3ENLtc66ueP5Hc.bI9SRwGss/yJ4b7YNU1GW3AlWY2yI3TXoDc+pyRbZRNSJmqgjo1fBQbnT7LXkiEuEGIpU9FAx8hjIe1fLk9Q5qKtsOO7FnAgLf2zSBOPZcpK/LUaCB5f8aysk2j2dyim1f8TulV+jUQMNoQjt4sL7CPLIOLFKMID2YoP55Tgm9kEwoCJ8HVJtrhusXszu4umrfKL018ZMQ=="
+      // unlockAtStage: 1   // optional: hide until this stage is solved
+    },
 
-    videos: [
-      {
-        title: "PLACEHOLDER — a memory in motion",
-        src: "assets/media/video/clip-1.mp4",
-        poster: "" // optional thumbnail path
-        // unlockAtStage: 3
-      }
-    ]
+    // Google Drive folder — shows an embedded preview grid + an "open" button.
+    drive: {
+      title: "Our little vault",
+      blurb: "Photos and videos, just for us.",
+      enc: "v1.d1OKeS9wfhbwvLOK6S5ufA==.jEoxqQiyS6lCfkau.9jE5FRvqcanUT2eaUo+6qGyp9IPwkh8PgY1qKDuFsDhdUx+1gOR7Uv9KZWeqmXzvcd3wVQepNqLtqGx3zNafGLRpbBYB0j0TwYMoKv/Hhy6I6hBpanpUfA=="
+      // unlockAtStage: 1   // optional: hide until this stage is solved
+    }
   }
 };

@@ -45,12 +45,12 @@ window.HUNT_CLUES = {
   2: {
     clue:
       "Next, head further uptown, closer to your old place to a spot near and dear to your and my heart." +
-      "You next stop is where we had our first start." +
-      "While I hope its not raining when you go this time, I am so glad it did on our first visit because it helped make you mine."+
-      "Look for you passowrd on a wooden doorframe a few buildings south (the way you're coming) from this place.",
+      " Your next stop is where we had our first start." +
+      " While I hope its not raining when you go this time, I am so glad it did on our first visit because it helped make you mine."+
+      " Look for you passowrd on a wooden doorframe a few buildings south (the way you're coming) from this place.",
     locationDetail:  "Balade, 208 1st Ave, New York, NY 10009, United States",
-    hint: "Look for the wood doorframe between the L-Train and the Brodo, its towards the bottom on the right side of the doorframe",
-    passwordHint: "PLACEHOLDER — optional nudge toward the password.",
+    hint: "Where our first date was!",
+    passwordHint: "Look for the wood doorframe between the L-Train and the Brodo, its towards the bottom on the right side of the doorframe",
     reveal: "Great job! I hope your memory of this place is a font as mine! Onto the next stop!"
   },
 
@@ -59,10 +59,10 @@ window.HUNT_CLUES = {
     clue:
       "Now find a quiet place full of incense and crystals, where the tarot " +
       "readers fill the room and the shelves hum with great energy. Your favorite place to get readings and my favorite to get crystals!" +
-      "There you will find a spirit guide know to help you overcome fears as you leap into new territories" +
-      "The password you're looking for is the name of the spirit guide waiting for you behind the counter or the crystal with it!",
+      " There you will find a spirit guide know to help you overcome fears as you leap into new territories!" +
+      " The password you're looking for is the name of the spirit guide waiting for you behind the counter or the crystal with it! (It is under your first name)",
     locationDetail: "Aum Shanti Bookshop, 230 E 14th St, New York, NY 10003, United States",
-    hint: "PLACEHOLDER — optional gentle nudge toward the location.",
+    hint: "The tarot readers near union square where you get readings",
     passwordHint: "A more formal name for the animal you have next to my name in your contacts",
     reveal: "After you so generously gave me your amythist I thougt it was only fair to give you another one!"
   },
@@ -73,7 +73,7 @@ window.HUNT_CLUES = {
       "Time for some fresh air. Head to the famous square with the grand arch " +
       "and the fountain at its heart, where we sharted my favorite kiss of the summer. " +
       "Cant wait to come back here with you soon and give you another one!" +
-      "Look for the password underneither a bench looking directly at the fountain.",
+      " Look for the password underneither a bench looking directly at the fountain.",
     locationDetail: "Washington Square Park",
     hint: "",
     passwordHint: "If you're under the arch the bench is at 9:00 o'clock on the one adjacent to the walkway under the first panel. There is unfortunaly a good chance someone removed it but I hope its there still!",
@@ -86,9 +86,9 @@ window.HUNT_CLUES = {
       "Back down south a bit to a bookstore with my name in it — a place " +
       "where you could lose hours among the shelves. Find a quiet " +
       "corner there and find a book about Graziano's take on a feeling I have alot of for you." +
-      "Once you find what you're looking for make sure to go to the front and pick up the book I left for you! (under your last name)",
+      " Once you find what you're looking for make sure to go to the front and pick up the book I left for you! (under your last name)",
     locationDetail: "McNally Jackson Books, 134 Prince St, New York, NY 10012, United States",
-    hint: "PLACEHOLDER — optional gentle nudge toward the location.",
+    hint: "McNally is the first part of the name of the bookstore",
     passwordHint: "It is a card in the back cover of a copy of Love, by Michael S. Graziano. Go to the back right corner and turn around. You'll see it straigt ahead in the little nook in front of you!",
     reveal: "I know you're going to love this book! I can't wait to read it with you!"
   },
@@ -99,10 +99,10 @@ window.HUNT_CLUES = {
       "Last stop — out to the water's edge, to a pier on the river where you " +
       "can putt a little ball through windmills and tunnels. A place where I 100% beat you " +
       "and desperatly need a rematch!" +
-      "Look for the password on the front of a bench facing the water.",
+      " Look for the password on the front of a bench facing the water.",
     locationDetail: "Pier 25 Mini Golf, 225 West St, New York, NY 10013, United States",
-    hint: "PLACEHOLDER — optional gentle nudge toward the location.",
-    passwordHint: "On the first bench on the right side after you pass by the entrance to mini golf.",
+    hint: "Mini golf on the pier ... (25)",
+    passwordHint: "On the first bench on the left side after you pass by the entrance to mini golf.",
     reveal: "" // no reveal — solving stop 6 triggers the victory page
   }
 
