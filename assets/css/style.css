@@ -1140,10 +1140,41 @@ a { color: var(--rose-soft); }
   font-size: 16px;
   margin: 0 0 28px;
 }
-.victory__media { margin: 0 0 24px; }
+.victory__media {
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
 .victory__media img,
 .victory__media video,
 .victory__media audio { width: 100%; border-radius: var(--radius); }
+
+/* Inline Google Drive player(s). Portrait-shaped so phone videos fill the box
+   cleanly; Drive letterboxes anything else, so nothing is ever cropped. */
+.victory__video {
+  position: relative;
+  width: 100%;
+  max-width: 340px;
+  aspect-ratio: 9 / 16;
+  max-height: 72vh;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: rgba(7, 10, 34, 0.85);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.victory__video iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+.victory__open { align-self: center; }
 
 /* confetti hearts in victory overlay */
 .victory__confetti {
@@ -1312,6 +1343,9 @@ a { color: var(--rose-soft); }
   .victory__title    { font-size: clamp(28px, 8vw, 40px); margin: 14px 0 10px; }
   .victory__message  { font-size: 17px; }
   .victory__signature { font-size: 15px; margin-bottom: 22px; }
+  /* Let the player fill the card width on phones (bigger tap target), while
+     capping height so the play controls stay comfortably on-screen. */
+  .victory__video { max-width: none; max-height: 68vh; }
 
   .app__footer { margin-top: 36px; }
 }

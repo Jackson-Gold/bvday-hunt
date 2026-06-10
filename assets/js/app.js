@@ -795,14 +795,19 @@
   //  Victory overlay
   // -------------------------------------------------------------------------
   function openVictory() {
+    const v = CONTENT.victory || {};
     const overlay = $("#victory");
-    $("#victory-title").textContent     = CONTENT.victory?.title   || "You found me.";
-    $("#victory-message").textContent   = CONTENT.victory?.message || "";
-    $("#victory-signature").textContent = CONTENT.victory?.signature || "";
+    $("#victory-title").textContent     = v.title   || "You found me.";
+    $("#victory-message").textContent   = v.message || "";
+    const sig = $("#victory-signature");
+    sig.textContent = v.signature || "";
+    sig.hidden = !v.signature;
 
     const mediaWrap = $("#victory-media");
     mediaWrap.innerHTML = "";
-    const m = CONTENT.victory?.media;
+
+    // Legacy single local-file media (kept for backward compatibility).
+    const m = v.media;
     if (m && m.src) {
       if (m.type === "video") {
         mediaWrap.appendChild(el("video", { controls: true, src: m.src, playsinline: true, preload: "metadata", poster: m.poster || "" }));
@@ -813,8 +818,42 @@
       }
     }
 
+    // Encrypted Google Drive folder → inline players, one per file id.
+    if (v.driveEnc) fillVictoryMedia(mediaWrap, v.driveEnc);
+
     overlay.hidden = false;
     seedConfetti(overlay.querySelector(".victory__confetti"));
+  }
+
+  async function fillVictoryMedia(wrap, blob) {
+    const raw = await decryptSecret(masterPassword, blob);
+    let data = null;
+    try { data = JSON.parse(raw); } catch { data = null; }
+    if (!data) {
+      wrap.appendChild(el("p", { class: "vault__error" }, vaultDecryptError()));
+      return;
+    }
+    const files = Array.isArray(data.files) ? data.files : [];
+    files.forEach((id) => {
+      if (!id) return;
+      wrap.appendChild(el("div", { class: "victory__video" }, [
+        el("iframe", {
+          src: `https://drive.google.com/file/d/${id}/preview`,
+          allow: "autoplay; fullscreen",
+          allowfullscreen: true,
+          loading: "lazy",
+          title: "A little something for you"
+        })
+      ]));
+    });
+    if (data.folder) {
+      wrap.appendChild(el("a", {
+        class: "vault__open victory__open",
+        href: data.folder,
+        target: "_blank",
+        rel: "noopener noreferrer"
+      }, "open in Google Drive ↗"));
+    }
   }
   $("#victory-close").addEventListener("click", () => {
     $("#victory").hidden = true;

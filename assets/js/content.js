@@ -186,17 +186,25 @@ window.HUNT_CONTENT = {
 
   /* -----------------------------------------------------------------------
    *  VICTORY PAGE
-   *  Shown when stage 6 is solved. Can include an optional media reveal.
+   *  Shown when stage 6 is solved.
+   *
+   *  `title` is the big celebratory headline; `message` is the note beneath it
+   *  (line breaks are kept). Together they read as one message, top to bottom.
+   *
+   *  `driveEnc` is an ENCRYPTED (master password) JSON payload describing the
+   *  Google Drive folder to show — { folder: "<url>", files: ["<fileId>", …] }.
+   *  Each file id is embedded as an inline player right on the page. To change
+   *  what plays, re-encrypt a new payload with tools/secrets.html (paste the
+   *  whole {"folder":…,"files":[…]} JSON as the text to hide).
    * --------------------------------------------------------------------- */
   victory: {
-    title: "You found me.",
-    message: "PLACEHOLDER — your victory message. The big one. Tell them everything you've been wanting to say. This is the heart of the hunt.",
-    signature: "— yours, always",
-    // Optional finale media (set to null to skip). Examples:
-    //   { type: "video", src: "assets/media/video/finale.mp4", poster: "" }
-    //   { type: "audio", src: "assets/media/audio/finale.mp3" }
-    //   { type: "image", src: "assets/media/finale.jpg", alt: "us" }
-    media: null
+    title: "Amazing job Gabi!",
+    message:
+      "You did it! You found all the clues and my heart! " +
+      "But you had that last one already! I knew you could do it!\n\n" +
+      "Watch the video below.",
+    signature: "",
+    driveEnc: "v1.h2thnQUz7d85f1zhln4zIw==.M7xpExWkCRuUYyPw.cWNFBvTGQnLy5U0E6SxPACVB0GjEVwrqDrK1NcgkQUjJRXPiWzvkpOEtV2mb+qF1frpNd5NKuRNZiy0BxJ4N2iFVFWB4m0ZYLI/xhuGwFjMnYAsOBcUEVLQmcm6BPYARfnLKHnrk69C15CuKFOhP7q4vRNzjQtHYRUXYDxVIgq7YGzGoqk7AaWcN5KSz1z8M94qF"
   },
 
   /* -----------------------------------------------------------------------
