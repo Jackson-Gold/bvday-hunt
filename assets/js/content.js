@@ -191,20 +191,24 @@ window.HUNT_CONTENT = {
    *  `title` is the big celebratory headline; `message` is the note beneath it
    *  (line breaks are kept). Together they read as one message, top to bottom.
    *
-   *  `driveEnc` is an ENCRYPTED (master password) JSON payload describing the
-   *  Google Drive folder to show — { folder: "<url>", files: ["<fileId>", …] }.
-   *  Each file id is embedded as an inline player right on the page. To change
-   *  what plays, re-encrypt a new payload with tools/secrets.html (paste the
-   *  whole {"folder":…,"files":[…]} JSON as the text to hide).
+   *  `videos` shows a Google Drive folder beneath the message, in the same
+   *  dynamic grid style as the other pages — it displays whatever is in the
+   *  folder automatically. The `enc` link is ENCRYPTED with the master password
+   *  (change it via tools/secrets.html). The folder must be shared "Anyone with
+   *  the link can view."
    * --------------------------------------------------------------------- */
   victory: {
     title: "Amazing job Gabi!",
     message:
       "You did it! You found all the clues and my heart! " +
       "But you had that last one already! I knew you could do it!\n\n" +
-      "Watch the video below.",
+      "Watch the videos below.",
     signature: "",
-    driveEnc: "v1.h2thnQUz7d85f1zhln4zIw==.M7xpExWkCRuUYyPw.cWNFBvTGQnLy5U0E6SxPACVB0GjEVwrqDrK1NcgkQUjJRXPiWzvkpOEtV2mb+qF1frpNd5NKuRNZiy0BxJ4N2iFVFWB4m0ZYLI/xhuGwFjMnYAsOBcUEVLQmcm6BPYARfnLKHnrk69C15CuKFOhP7q4vRNzjQtHYRUXYDxVIgq7YGzGoqk7AaWcN5KSz1z8M94qF"
+    videos: {
+      title: "Your videos",
+      blurb: "Press play, meu amor. ♡",
+      enc: "v1.cNLkymnbt14X6j1ujmdj7A==.55XtOzZdG4G6zmlC.0G5CaxCrd/4tbZGNs862Auv3Yk5fS255I+B5P8JYfrZIAqVJMlKlH7+6zflyUED3xmvT75GViOfaJfH5POWFCx9AxODwcXACHBjnSWwokzpYuW0hezxlEg=="
+    }
   },
 
   /* -----------------------------------------------------------------------

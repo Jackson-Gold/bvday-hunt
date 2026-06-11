@@ -818,42 +818,12 @@
       }
     }
 
-    // Encrypted Google Drive folder → inline players, one per file id.
-    if (v.driveEnc) fillVictoryMedia(mediaWrap, v.driveEnc);
+    // Google Drive folder → the same dynamic grid embed used on the other
+    // pages (shows whatever's in the folder, auto-updating).
+    if (v.videos && v.videos.enc) fillDriveEmbed(mediaWrap, v.videos);
 
     overlay.hidden = false;
     seedConfetti(overlay.querySelector(".victory__confetti"));
-  }
-
-  async function fillVictoryMedia(wrap, blob) {
-    const raw = await decryptSecret(masterPassword, blob);
-    let data = null;
-    try { data = JSON.parse(raw); } catch { data = null; }
-    if (!data) {
-      wrap.appendChild(el("p", { class: "vault__error" }, vaultDecryptError()));
-      return;
-    }
-    const files = Array.isArray(data.files) ? data.files : [];
-    files.forEach((id) => {
-      if (!id) return;
-      wrap.appendChild(el("div", { class: "victory__video" }, [
-        el("iframe", {
-          src: `https://drive.google.com/file/d/${id}/preview`,
-          allow: "autoplay; fullscreen",
-          allowfullscreen: true,
-          loading: "lazy",
-          title: "A little something for you"
-        })
-      ]));
-    });
-    if (data.folder) {
-      wrap.appendChild(el("a", {
-        class: "vault__open victory__open",
-        href: data.folder,
-        target: "_blank",
-        rel: "noopener noreferrer"
-      }, "open in Google Drive ↗"));
-    }
   }
   $("#victory-close").addEventListener("click", () => {
     $("#victory").hidden = true;
